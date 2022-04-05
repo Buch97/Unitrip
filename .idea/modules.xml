@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/erlang_server/erlang_server.iml" filepath="$USER_HOME$/erlang_server/erlang_server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../erlang_server/erlang_server.iml" filepath="$PROJECT_DIR$/../erlang_server/erlang_server.iml" />
     </modules>
   </component>
 </project>
