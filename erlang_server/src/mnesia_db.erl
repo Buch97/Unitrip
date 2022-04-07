@@ -11,12 +11,12 @@
 
 %%% API
 
--export([create_mnesia_schema/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2]).
+-export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2]).
 
 -record(user, {username, password}).
 -record(trip, {pid, country, city, users_list = [], timestamp}).
 
-create_mnesia_schema() ->
+start_mnesia() ->
   mnesia:create_schema([node()]),
   io:format("[MNESIA] New schema created. ~n"),
   application:set_env(mnesia, dir, "~/mnesia_db_storage"),
@@ -78,7 +78,7 @@ check_user_present(Username) ->
     end
   end,
   Res = mnesia:activity(transactions, Fun),
-  io:format("[MNESIA] Result of the transaction ~p~n", [Res]),
+  io:format("[MNESIA] Result of the transaction: ~p~n", [Res]),
   Res.
 
 perform_login(Username, Password) ->
