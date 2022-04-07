@@ -12,24 +12,28 @@ public class MessageHandler {
     private static final String serverPID = "otp_server";
 
     public String register_message(HttpSession s, User user) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpErlangMap otpErlangMap = new OtpErlangMap(
+        /*OtpErlangMap otpErlangMap = new OtpErlangMap(
                 new OtpErlangObject[]{new OtpErlangString("username"), new OtpErlangString("password")},
-                new OtpErlangObject[]{new OtpErlangString(user.getUsername()), new OtpErlangString(user.getPassword())});
-        send(s, serverPID, new OtpErlangAtom("register"), otpErlangMap);
+                new OtpErlangObject[]{new OtpErlangString(user.getUsername()), new OtpErlangString(user.getPassword())});*/
+        OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(user.getUsername()),
+                new OtpErlangString(user.getPassword())});
+        send(s, serverPID, new OtpErlangAtom("register"), otpErlangTuple);
         return receiveResponse(s);
     }
 
     public String login_message(HttpSession s, User user) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpErlangMap otpErlangMap = new OtpErlangMap(
+        /*OtpErlangMap otpErlangMap = new OtpErlangMap(
                 new OtpErlangObject[]{new OtpErlangString("username"), new OtpErlangString("password")},
-                new OtpErlangObject[]{new OtpErlangString(user.getUsername()), new OtpErlangString(user.getPassword())});
-        send(s, serverPID, new OtpErlangAtom("login"), otpErlangMap);
+                new OtpErlangObject[]{new OtpErlangString(user.getUsername()), new OtpErlangString(user.getPassword())});*/
+        OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(user.getUsername()),
+                new OtpErlangString(user.getPassword())});
+        send(s, serverPID, new OtpErlangAtom("login"), otpErlangTuple);
         return receiveResponse(s);
     }
 
-    public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangMap otpErlangMap){
+    public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangTuple otpErlangTuple){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
-        OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangMap});
+        OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangTuple});
         otpMbox.send(serverPID, serverNode, request);
     }
 
