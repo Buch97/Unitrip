@@ -16,9 +16,7 @@
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
-        <h2 class="active"> Sign In </h2>
-        <h2 class="inactive underlineHover">Sign Up </h2>
-
+        <h2 class="active"> Log In </h2>
         <!-- Icon -->
         <div class="fadeIn first">
             <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon"/>
@@ -37,7 +35,7 @@
 
         <!-- Remind Password -->
         <div id="formFooter">
-            <a class="underlineHover" href="#">Forgot Password?</a>
+            <div class="underlineHover" href="#">Not yet registered? Sign up <a href="<%=request.getContextPath()%>/RegistrationServlet">here</a></div>
         </div>
 
     </div>
