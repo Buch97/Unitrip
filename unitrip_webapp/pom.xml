@@ -30,11 +30,24 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>clojang</groupId>
+            <artifactId>erlang-jinterface</artifactId>
+            <version>1.10-1</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
         </dependency>
     </dependencies>
+
+    <repositories> <!-- senza que la dipendenza clojang non va, poi clicca martello -->
+        <repository>
+            <id>repo2-jinterface</id>
+            <name>repository2 for Erlang jinterface</name>
+            <url>https://clojars.org/repo/</url>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>unitrip_webapp</finalName>

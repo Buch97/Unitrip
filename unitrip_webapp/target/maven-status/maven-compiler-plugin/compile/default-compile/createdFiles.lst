@@ -1,2 +1,10 @@
-JInterface/JavaInterface.class
-servlet/LoginServlet.class
+servlet\NewTripServlet.class
+communication\OtpMboxSingleton.class
+dto\User.class
+dto\Trip.class
+servlet\RegistrationServlet.class
+communication\MessageHandler.class
+servlet\HomepageServlet.class
+dto\TripList.class
+servlet\ListDownloadServlet.class
+servlet\LoginServlet.class

@@ -1,2 +1,10 @@
-/home/matteo/IdeaProjects/dsmt-uniptrip/dsmt-uniptrip/unitrip_webapp/src/main/java/JInterface/JavaInterface.java
-/home/matteo/IdeaProjects/dsmt-uniptrip/dsmt-uniptrip/unitrip_webapp/src/main/java/servlet/LoginServlet.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\dto\User.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\servlet\LoginServlet.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\servlet\HomepageServlet.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\servlet\NewTripServlet.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\servlet\RegistrationServlet.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\dto\Trip.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\communication\OtpMboxSingleton.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\dto\TripList.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\communication\MessageHandler.java
+C:\Users\pucci\IdeaProjects\dsmt-unitrip\unitrip_webapp\src\main\java\servlet\ListDownloadServlet.java
