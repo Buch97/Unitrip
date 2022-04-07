@@ -8,9 +8,34 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <link href="./resources/css/login.css" rel="stylesheet" type="text/css"/>
 </head>
-<body>
 
+<body>
+<h1>Registration Page</h1>
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <h2 class="active"> Sign Up </h2>
+        <!-- Icon -->
+        <div class="fadeIn first">
+            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon"/>
+        </div>
+
+        <!-- Login Form -->
+        <form action="<%=request.getContextPath()%>/RegistrationServlet" method="post">
+            <div>
+                <input type="text" class="fadeIn second" name="username" placeholder="Enter username" aria-describedby="username" id="username" required>
+            </div>
+            <div>
+                <input type="password" class="fadeIn third" name="password" placeholder="Enter password" id="password" required>
+            </div>
+            <input type="submit" class="fadeIn fourth" value="Register">
+        </form>
+        <div id="formFooter">
+            <div class="underlineHover" href="#">Already Registered? Log in <a href="<%=request.getContextPath()%>/LoginServlet">here</a></div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
