@@ -9,6 +9,7 @@
 -module(loop_server).
 -author("matteo").
 
+-import(erlang_server_app, [start_main_server/0, stop/1, register_request/2]).
 -export([init_listener/0]).
 
 
@@ -22,7 +23,7 @@
 %%--------------------------------------------------------------------
 
 init_listener() ->
- io:format("[LISTENER] Starting OTP gen_server"),
+ io:format("[LISTENER] Starting OTP gen_server. ~n"),
  erlang_server_app:start_main_server(),
  LoopServer = spawn(fun() -> listener_server_loop() end ),
  io:format("[LISTENER] Loop server spawned with pid ~p. ~n", [LoopServer]),
@@ -42,12 +43,10 @@ listener_server_loop() ->
   {From, register, {Username, Password}} ->
    io:format(" [LISTENER] Received a request for registration.~n"),
    Result = erlang_server_app:register_request(Username, Password),
-   From ! {self(), Result}
- end,
- receive
+   From ! {self(), Result};
   {From, login, {Username, Password}} ->
-   io:format(" [LISTENER] Received a request for registration.~n"),
-   Result = erlang_server_app:register_request(Username, Password),
+   io:format(" [LISTENER] Received a request for login.~n"),
+   Result = erlang_server_app:login_request(Username, Password),
    From ! {self(), Result}
  end,
  listener_server_loop().

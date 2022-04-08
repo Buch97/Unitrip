@@ -19,7 +19,7 @@
 start_mnesia() ->
   mnesia:create_schema([node()]),
   io:format("[MNESIA] New schema created. ~n"),
-  application:set_env(mnesia, dir, "~/mnesia_db_storage"),
+  %% application:set_env(mnesia, dir, "~/mnesia_db_storage"),
   mnesia:start(),
   case mnesia:wait_for_tables([trip, user], 5000) == ok of
     true ->
@@ -40,51 +40,49 @@ start_mnesia() ->
 %%%===================================================================
 
 add_user(Username, Password) ->
-  Fun = fun() ->
+  T = fun() ->
+    io:format("[MNESIA] Adding user ~p. ~n", [{Username, Password}]),
     mnesia:write(#user
     {
       username = Username,
       password = Password
     })
         end,
-  mnesia:activity(transaction, Fun).
+  mnesia:transaction(T).
 
 %% using the function mnesia:read({Table, Key})
 get_user(Username) ->
-  Fun = fun() ->
-    io:format("[MNESIA] Searching for user ~p. ~n", [Username]),
+  T = fun() ->
     mnesia:read({user, Username})
   end,
-  mnesia:activity(transaction, Fun).
+  mnesia:transaction(T).
 
 %% using the function mnesia:delete({Table, Key})
 delete_user(Username) ->
-  Fun = fun() ->
+  T = fun() ->
     io:format("[MNESIA] Deleting user ~p. ~n", [Username]),
     mnesia:delete({user, Username})
   end,
-  mnesia:activity(transaction, Fun).
+  mnesia:transaction(T).
 
 check_user_present(Username) ->
-  Fun = fun() ->
+  T = fun() ->
     io:format("[MNESIA] Checking if user ~p is present in the database. ~n", [Username]),
-    case get_user(Username) =:= [] of
-      true ->
+    case get_user(Username) of
+      {atomic, []} ->
         io:format("[MNESIA] User ~p not present. ~n", [Username]),
         false;
-      false ->
+      _ ->
         io:format("[MNESIA] User ~p already present in the database. ~n", [Username]),
         true
     end
   end,
-  Res = mnesia:activity(transactions, Fun),
-  io:format("[MNESIA] Result of the transaction: ~p~n", [Res]),
-  Res.
+  mnesia:transaction(T).
 
 perform_login(Username, Password) ->
-  Fun = fun() ->
+  T = fun() ->
     io:format("[MNESIA] Performing login of the user ~p. ~n", [Username]),
-    ({user, Username, Pass}) = get_user(Username),
+    {_, [{user, Username, Pass}]} = get_user(Username),
     case Password =:= Pass of
       true ->
         io:format("[MNESIA] Password correctly verified. ~n"),
@@ -94,7 +92,7 @@ perform_login(Username, Password) ->
         false
     end
   end,
-  mnesia:activity(transactions, Fun).
+  mnesia:transaction(T).
 
 %%%===================================================================
 %%% TRIP OPERATIONS
