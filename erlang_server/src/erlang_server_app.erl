@@ -23,20 +23,10 @@ start_main_server() ->
     Res.
 
 register_request(Username, Password) ->
-    case mnesia_db:check_user_present(Username) of
-        {atomic, false} ->
-            gen_server:call(main_server, {register, Username, Password});
-        _ ->
-            {false}
-    end.
+    gen_server:call(main_server, {register, Username, Password}).
 
 login_request(Username, Password) ->
-    case mnesia_db:check_user_present(Username) of
-        {atomic, true} ->
-            gen_server:call(main_server, {login, Username, Password});
-        _ ->
-            {false}
-    end.
+    gen_server:call(main_server, {login, Username, Password}).
 
 stop(_State) ->
     ok.

@@ -41,13 +41,18 @@ start_mnesia() ->
 
 add_user(Username, Password) ->
   T = fun() ->
-    io:format("[MNESIA] Adding user ~p. ~n", [{Username, Password}]),
-    mnesia:write(#user
-    {
-      username = Username,
-      password = Password
-    })
-        end,
+    case mnesia_db:check_user_present(Username) of
+      {atomic, false} ->
+        io:format("[MNESIA] Adding user ~p. ~n", [{Username, Password}]),
+        mnesia:write(#user
+        {
+          username = Username,
+          password = Password
+        });
+      _ ->
+        false
+    end
+  end,
   mnesia:transaction(T).
 
 %% using the function mnesia:read({Table, Key})
@@ -82,13 +87,18 @@ check_user_present(Username) ->
 perform_login(Username, Password) ->
   T = fun() ->
     io:format("[MNESIA] Performing login of the user ~p. ~n", [Username]),
-    {_, [{user, Username, Pass}]} = get_user(Username),
-    case Password =:= Pass of
-      true ->
-        io:format("[MNESIA] Password correctly verified. ~n"),
-        true;
-      false ->
-        io:format("[MNESIA] Incorrect password. ~n"),
+    case mnesia_db:check_user_present(Username) of
+      {atomic, true} ->
+        {_, [{user, Username, Pass}]} = get_user(Username),
+        case Password =:= Pass of
+          true ->
+            io:format("[MNESIA] Password correctly verified. ~n"),
+            true;
+          false ->
+            io:format("[MNESIA] Incorrect password. ~n"),
+            false
+        end;
+      _ ->
         false
     end
   end,
