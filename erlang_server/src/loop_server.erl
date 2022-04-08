@@ -41,12 +41,16 @@ init_listener() ->
 listener_server_loop() ->
  receive
   {From, register, {Username, Password}} ->
-   io:format(" [LISTENER] Received a request for registration.~n"),
+   io:format("[LISTENER] Received a request for registration.~n"),
    Result = erlang_server_app:register_request(Username, Password),
    From ! {self(), Result};
   {From, login, {Username, Password}} ->
-   io:format(" [LISTENER] Received a request for login.~n"),
+   io:format("[LISTENER] Received a request for login.~n"),
    Result = erlang_server_app:login_request(Username, Password),
+   From ! {self(), Result};
+  {From, delete, Username} ->
+   io:format("[LISTENER] Received a request for deleting user ~p.~n", [Username]),
+   Result = erlang_server_app:delete_request(Username),
    From ! {self(), Result}
  end,
  listener_server_loop().
