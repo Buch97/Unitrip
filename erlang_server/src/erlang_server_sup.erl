@@ -12,7 +12,7 @@
 
 start_link() ->
   %% start_link(ServerName, Module, Args, Options)
-  Supervisor = supervisor:start_link({global, ?MODULE}, ?MODULE, [], []),
+  Supervisor = supervisor:start_link({global, ?MODULE}, ?MODULE, []),
   io:format("[SUPERVISOR] Supervisor spawned."),
   Supervisor.
 

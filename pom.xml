@@ -41,6 +41,14 @@
     </dependency>
   </dependencies>
 
+  <repositories> <!-- senza que la dipendenza clojang non va, poi clicca martello -->
+    <repository>
+      <id>repo2-jinterface</id>
+      <name>repository2 for Erlang jinterface</name>
+      <url>https://clojars.org/repo/</url>
+    </repository>
+  </repositories>
+
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
