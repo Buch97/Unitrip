@@ -1,27 +1,34 @@
 package dto;
 
+import com.ericsson.otp.erlang.*;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Trip {
     int id;
     String destination;
-    Date date;
+    LocalDate date;
+    String founder;
     int seats;
-    Date expirationDate; //o questo o direttamente un timer che scorre
-    String contact;
     ArrayList<String> participants;
-    String description;
 
-    public Trip(String destination, Date date, int seats, Date expirationDate, String contact, ArrayList<String> particpants, String description) {
-        this.id = id;
+
+    public Trip(String destination, LocalDate date, String founder, int seats) {
         this.destination = destination;
+        this.founder = founder;
         this.date = date;
         this.seats = seats;
-        this.expirationDate = expirationDate;
-        this.contact = contact;
-        this.participants = particpants;
-        this.description = description;
+    }
+
+    public Trip(String destination, LocalDate date, String founder, int seats, ArrayList<String> participants) {
+        this.destination = destination;
+        this.founder = founder;
+        this.date = date;
+        this.seats = seats;
+        this.participants = participants;
     }
 
     public int getId() {
@@ -32,6 +39,14 @@ public class Trip {
         this.id = id;
     }
 
+    public String getFounder() {
+        return founder;
+    }
+
+    public void setFounder(String founder) {
+        this.founder = founder;
+    }
+
     public String getDestination() {
         return destination;
     }
@@ -40,11 +55,11 @@ public class Trip {
         this.destination = destination;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -56,22 +71,6 @@ public class Trip {
         this.seats = seats;
     }
 
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
-
-    public String getContact() {
-        return contact;
-    }
-
-    public void setContact(String contact) {
-        this.contact = contact;
-    }
-
     public ArrayList<String> getParticipants() {
         return participants;
     }
@@ -80,12 +79,28 @@ public class Trip {
         this.participants = particpants;
     }
 
-    public String getDescription() {
-        return description;
+    public static Trip parseErlang(OtpErlangList elem) throws OtpErlangRangeException {
+        ArrayList<String> participants = null;
+        int id = ((OtpErlangInt) elem.elementAt(0)).intValue();
+        String destination = ((OtpErlangString) elem.elementAt(1)).stringValue();
+        String dateErlang = ((OtpErlangString) elem.elementAt(2)).stringValue();
+        String founder = ((OtpErlangString) elem.elementAt(3)).stringValue();
+        int seats = ((OtpErlangInt) elem.elementAt(0)).intValue();
+        OtpErlangList erlParticipants = (OtpErlangList) (elem.elementAt(4));
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("d MMMM, yyyy");
+        LocalDate date = getDateFromString(dateErlang, format);
+
+        for (OtpErlangObject obj : erlParticipants) {
+            String user = obj.toString();
+            participants.add(user);
+        }
+
+        return  new Trip(destination, date, founder, seats, participants);
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    private static LocalDate getDateFromString(String dateErlang, DateTimeFormatter format) {
+        LocalDate dateTime = LocalDate.parse(dateErlang, format);
+        return dateTime;
     }
 
 

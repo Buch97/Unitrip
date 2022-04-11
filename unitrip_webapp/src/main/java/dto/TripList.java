@@ -3,17 +3,21 @@ package dto;
 import java.util.ArrayList;
 
 public class TripList {
-    ArrayList<Trip> tripList;
+    ArrayList<Trip> trips;
 
-    public TripList(ArrayList<Trip> tripList) {
-        this.tripList = tripList;
+    public TripList(ArrayList<Trip> trips) {
+        this.trips = trips;
     }
 
-    public ArrayList<Trip> getTripList() {
-        return tripList;
+    public TripList() {
+
     }
 
-    public void setTripList(ArrayList<Trip> tripList) {
-        this.tripList = tripList;
+    public ArrayList<Trip> getTrips() {
+        return trips;
+    }
+
+    public void setTrips(ArrayList<Trip> trips) {
+        this.trips = trips;
     }
 }
