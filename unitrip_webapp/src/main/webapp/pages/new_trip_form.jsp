@@ -14,12 +14,12 @@
 <body>
 <div>
     <h1>Compile this form to create a new Trip</h1>
-    <form action="<%=request.getContextPath()%>/HomepageServlet" method="post">
+    <form action="<%=request.getContextPath()%>/NewTripServlet" method="post">
         <ul class="form-style-1">
             <li><label>Destination <span class="required">*</span></label><input type="text" name="destination" class="field-divided" placeholder="city" /> </li>
             <li>
-                <label>Founder </label>
-                <input type="text" name="founder" class="field-long"/>
+                <label>Founder<span class="required">*</span> </label>
+                <input type="text" name="founder" class="field-long" value="<%=request.getSession().getAttribute("username")%>" disabled/>
             </li>
             <li><label>Available seats <span class="required">*</span></label><input type="number" name="seats" class="field-divided" placeholder="0" /> </li>
             <li>

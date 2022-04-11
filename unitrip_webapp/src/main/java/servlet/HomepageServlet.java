@@ -17,14 +17,14 @@ public class HomepageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //ce da aggiungerci la sessione e la richiesta dei trip attivi
-        TripList tripList;
-        try {
+        /*TripList tripList;
+        try { //recupero la lista dei trip attivi e la setto nella sessione
             tripList = new MessageHandler().get_active_trips(request.getSession());
             request.setAttribute("triplist", tripList);
             request.getSession().setAttribute("tripList", tripList);
         } catch (OtpErlangDecodeException | OtpErlangExit | OtpErlangRangeException e) {
             e.printStackTrace();
-        }
+        }*/
         String targetJSP = "/pages/homepage.jsp";
         RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
         requestDispatcher.forward(request, response);

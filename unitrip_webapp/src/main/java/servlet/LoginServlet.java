@@ -38,7 +38,7 @@ public class LoginServlet extends HttpServlet {
         if (Objects.equals(allowLogin, "ok")) {
             request.getSession().setAttribute("username", username);
             //request.getSession().removeAttribute("loginStatus");
-            response.sendRedirect(request.getContextPath() + "/MainMenuServlet");
+            response.sendRedirect(request.getContextPath() + "/HomepageServlet");
         } else {
             System.out.println("Login failed");
             //request.getSession().setAttribute("loginStatus", "error");

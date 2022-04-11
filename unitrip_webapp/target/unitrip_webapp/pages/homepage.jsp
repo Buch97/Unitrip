@@ -1,7 +1,9 @@
 <%@ page import="dto.Trip" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.io.File" %>
-<%@ page import="java.io.FileWriter" %><%--
+<%@ page import="java.io.FileWriter" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="dto.TripList" %><%--
   Created by IntelliJ IDEA.
   User: pucci
   Date: 07/04/2022
@@ -23,19 +25,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="./resources/css/homepage.css" rel="stylesheet" />
+
 </head>
 <body>
-<!-- Navigation-->
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
-        <a style="margin-left:20em; font-size:20pt" class="navbar-brand" >Incoming trips</a>
+        <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt">Logout</a></div>
+        <a style="margin-left:10em; font-size:25pt" class="navbar-brand" >Incoming trips</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form style="margin-left:15em" class="d-flex">
-                <button onclick="window.location.href='./NewTripServlet';" class="btn btn-outline-dark" >
-                    Create new trip
-                </button>
-            </form>
+            <div style="margin-left:15em" class="d-flex">
+                <button onclick="window.location.href='./NewTripServlet';" class="btn btn-outline-dark" >Create new trip</button>
+            </div>
         </div>
     </div>
 </nav>
@@ -44,24 +46,20 @@
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <%
-                List<Trip> tripList = (List<Trip>) request.getAttribute("tripList");
-                if(tripList == null || tripList.size() == 0){
+                TripList tripList = (TripList) request.getAttribute("tripList");
+                if(tripList == null || tripList.getTrips().size() == 0){
             %>
             <h3>Nothing to Show<h3>
                     <%
                         } else {
-                            for(int i=0; i<tripList.size(); i++){
-                                Trip trip = tripList.get(i);
+                            for(int i=0; i< tripList.getTrips().size(); i++){
+                                Trip trip = tripList.getTrips().get(i);
                     %>
             <div style="width:30%; height:20%" class="col mb-5">
                 <div class="card h-100">
-                    <!-- Product image-->
-                    <!-- Product details-->
                     <div class="card-body p-4">
                         <div class="text-center">
-                            <!-- Product name-->
                             <h1 class="fw-bolder"><%= trip.getDestination()%>></h1>
-                            <!-- Product price-->
                             <h3><%=trip.getDate()%>></h3>
                             <h3>Founder: <%=trip.getFounder()%>></h3>
                             <h3>From: Bologna</h3>
@@ -75,7 +73,17 @@
                             <h3><a href="<%=myObj%>" download>Participants</a></h3>
                             <h3>Remaining time: 08:27:35</h3>
                         </div>
-                        <div class="text-center"><a style="font-size:17pt" class="btn btn-outline-dark mt-auto" href="#">JOIN TRIP</a></div>
+                        <div class="text-center">
+                            <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
+                                <input type="hidden" name="trip" value="<%=trip.getId()%>">
+                                <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
+                                <% if(!trip.getParticipants().contains(request.getAttribute("username"))){%>
+                                <button style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit">JOIN TRIP</button>
+                                <%  } else {%>
+                                <button style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit">LEAVE TRIP</button>
+                                <% } %>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
