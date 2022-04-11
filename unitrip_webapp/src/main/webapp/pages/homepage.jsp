@@ -62,7 +62,7 @@
                             <h1 class="fw-bolder"><%= trip.getDestination()%>></h1>
                             <h3><%=trip.getDate()%>></h3>
                             <h3>Founder: <%=trip.getFounder()%>></h3>
-                            <h3>From: Bologna</h3>
+                            <!--<h3>From: Bologna</h3>!-->
                             <h3>Seats: <%=trip.getParticipants().size()%>/<%=trip.getSeats()%>></h3>
                             <% File myObj = new File("subscriptions.txt");
                                 FileWriter myWriter = new FileWriter("subscriptions.txt");
@@ -77,10 +77,10 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip" value="<%=trip.getId()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <% if(!trip.getParticipants().contains(request.getAttribute("username"))){%>
-                                <button style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit">JOIN TRIP</button>
+                                <% if(!trip.getParticipants().contains(request.getSession().getAttribute("username"))){%>
+                                <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
                                 <%  } else {%>
-                                <button style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit">LEAVE TRIP</button>
+                                <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                                 <% } %>
                             </form>
                         </div>

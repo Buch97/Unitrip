@@ -46,6 +46,13 @@ public class MessageHandler {
         return receiveResponse(s);
     }
 
+    public String remove_participant(HttpSession s, String user, int trip) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(user),
+                new OtpErlangInt(trip)});
+        send(s, serverPID, new OtpErlangAtom("remove_participant"), otpErlangTuple);
+        return receiveResponse(s);
+    }
+
     public TripList get_active_trips(HttpSession s) throws OtpErlangDecodeException, OtpErlangExit, OtpErlangRangeException {
         send(s, serverPID, new OtpErlangAtom("get_active_trips"));
         return receiveList(s);
@@ -90,4 +97,6 @@ public class MessageHandler {
         return (TripList) tripList;
 
     }
+
+
 }

@@ -35,14 +35,25 @@ public class HomepageServlet extends HttpServlet {
 
         String username = request.getParameter("username");
         int trip = Integer.parseInt(request.getParameter("trip"));
-        String success="";
-        try {
-            success = new MessageHandler().add_participant(request.getSession(), username, trip);
-        } catch (OtpErlangDecodeException | OtpErlangExit e) {
-            e.printStackTrace();
+        if(request.getParameter("joinButton") != null) {
+            String success = "";
+            try {
+                success = new MessageHandler().add_participant(request.getSession(), username, trip);
+            } catch (OtpErlangDecodeException | OtpErlangExit e) {
+                e.printStackTrace();
+            }
         }
-        String targetJSP = "/pages/homepage.jsp";
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
-        requestDispatcher.forward(request, response);
+        else if(request.getParameter("leaveButton") != null){
+            String success = "";
+            try {
+                success = new MessageHandler().remove_participant(request.getSession(), username, trip);
+            } catch (OtpErlangDecodeException | OtpErlangExit e) {
+                e.printStackTrace();
+            }
+        }
+            String targetJSP = "/pages/homepage.jsp";
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
+            requestDispatcher.forward(request, response);
+
     }
 }
