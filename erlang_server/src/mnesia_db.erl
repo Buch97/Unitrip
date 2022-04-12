@@ -12,7 +12,7 @@
 %%% API
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
-  get_trip_by_name/1, reset_trips/0, store_trip/3]).
+  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2]).
 
 -record(user, {username, password}).
 -record(trip, {pid, organizer, name, destination, date, seats, partecipants}).
@@ -130,8 +130,23 @@ get_trip(Pid) ->
   end,
   mnesia:transaction(T).
 
+update_partecipants(NewValue, Pid) ->
+  T = fun() ->
+    [Record] = mnesia:read({trip, Pid}),
+    mnesia:write(Record#trip{partecipants = NewValue})
+  end,
+  mnesia:transaction(T).
+
+update_seats(NewValue, Pid) ->
+  T = fun() ->
+    [Record] = mnesia:read({trip, Pid}),
+    mnesia:write(Record#trip{seats = NewValue})
+      end,
+  mnesia:transaction(T).
+
 store_trip(Pid, Seats, Partecipants) ->
-  ok.
+  update_partecipants(Partecipants, Pid),
+  update_seats(Seats, Pid).
 
 get_trip_by_name(Name) ->
   T = fun() ->
