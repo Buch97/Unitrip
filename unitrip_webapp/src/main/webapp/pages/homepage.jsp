@@ -46,42 +46,43 @@
     <div class="container px-4 px-lg-5 mt-5">
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <%
-                TripList tripList = (TripList) request.getAttribute("tripList");
-                if(tripList == null || tripList.getTrips().size() == 0){
+                ArrayList<Trip> tripList = (ArrayList<Trip>) request.getAttribute("tripList");
+                System.out.println("QUI: " + tripList);
+                if(tripList == null || tripList.size() == 0){
             %>
             <h3>Nothing to Show<h3>
                     <%
                         } else {
-                            for(int i=0; i< tripList.getTrips().size(); i++){
-                                Trip trip = tripList.getTrips().get(i);
+                            for(int i=0; i< tripList.size(); i++){
+                                Trip trip = tripList.get(i);
                     %>
             <div style="width:30%; height:20%" class="col mb-5">
                 <div class="card h-100">
                     <div class="card-body p-4">
                         <div class="text-center">
-                            <h1 class="fw-bolder"><%= trip.getDestination()%>></h1>
+                            <h1 class="fw-bolder"><%= trip.getDestination()%></h1>
                             <h3><%=trip.getDate()%>></h3>
                             <h3>Founder: <%=trip.getFounder()%>></h3>
                             <!--<h3>From: Bologna</h3>!-->
-                            <h3>Seats: <%=trip.getParticipants().size()%>/<%=trip.getSeats()%>></h3>
-                            <% File myObj = new File("subscriptions.txt");
+                            <h3>Seats: <%//=trip.getParticipants().size()%>/<%=trip.getSeats()%>></h3>
+                            <% /*File myObj = new File("subscriptions.txt");
                                 FileWriter myWriter = new FileWriter("subscriptions.txt");
                                 for(String user : trip.getParticipants())
                                     myWriter.write(user + "\n");
-                                myWriter.close();
+                                myWriter.close();*/
                             %>
-                            <h3><a href="<%=myObj%>" download>Participants</a></h3>
+                            <h3><a href="<%//=myObj%>" download>Participants</a></h3>
                             <h3>Remaining time: 08:27:35</h3>
                         </div>
                         <div class="text-center">
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
-                                <input type="hidden" name="trip" value="<%=trip.getId()%>">
+                                <!--<input type="hidden" name="trip" value="<%//trip.getId()%>"> -->
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <% if(!trip.getParticipants().contains(request.getSession().getAttribute("username"))){%>
+                                <% //if(!trip.getParticipants().contains(request.getSession().getAttribute("username"))){%>
                                 <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
-                                <%  } else {%>
-                                <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
-                                <% } %>
+                                <% // } else {%>
+                                <!-- <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP"> -->
+                                <% //} %>
                             </form>
                         </div>
                     </div>

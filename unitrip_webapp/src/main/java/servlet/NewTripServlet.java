@@ -10,12 +10,17 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.TimeZone;
 
 @WebServlet(name = "NewTripServlet", value = "/NewTripServlet")
 public class NewTripServlet extends HttpServlet {
@@ -32,30 +37,26 @@ public class NewTripServlet extends HttpServlet {
         String destination = request.getParameter("destination");
         String founder = request.getParameter("founder");
         int seats = Integer.parseInt(request.getParameter("seats"));
-
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("d MMMM, yyyy");
         String success = "";
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
-            LocalDate date = getDateFromString(request.getParameter("date"), format);
-            System.out.println(date);
-            success  = new MessageHandler().create_trip(request.getSession(), new Trip(destination, date, founder, seats));
-        } catch (OtpErlangDecodeException | OtpErlangExit e) {
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = formatter.parse(request.getParameter("date"));
+            System.out.println(date.getTime());
+            success  = new MessageHandler().create_trip(request.getSession(), destination, date.getTime(), founder, seats);
+            System.out.println("RIUSCITA");
+        } catch (OtpErlangDecodeException | OtpErlangExit | ParseException e) {
             e.printStackTrace();
         }
         catch (IllegalArgumentException | DateTimeParseException e) {
             System.out.println("Exception: " + e);
         }
 
-        if (Objects.equals(success, "ok")) {
+        if (Objects.equals(success, "true")) {
             response.sendRedirect(request.getContextPath() + "/HomepageServlet");
         } else {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/new_trip_form.jsp");
             requestDispatcher.forward(request, response);
         }
-    }
-
-    public static LocalDate getDateFromString(String string, DateTimeFormatter format){
-        LocalDate dateTime = LocalDate.parse(string, format);
-        return dateTime;
     }
 }
