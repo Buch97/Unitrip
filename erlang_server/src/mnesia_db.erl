@@ -11,10 +11,10 @@
 
 %%% API
 
--export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2]).
+-export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, show_available_trips/0, add_trip/6, get_trip_by_name/1, reset_trips/0]).
 
 -record(user, {username, password}).
--record(trip, {pid, country, city, users_list = [], timestamp}).
+-record(trip, {pid, organizer, name, destination, date, seats, partecipants}).
 
 start_mnesia() ->
   mnesia:create_schema([node()]),
@@ -82,7 +82,7 @@ check_user_present(Username) ->
         true
     end
   end,
-  mnesia:transaction(T).
+  mnesia:transaction(T). %% {atomic, false}
 
 perform_login(Username, Password) ->
   T = fun() ->
@@ -108,5 +108,38 @@ perform_login(Username, Password) ->
 %%% TRIP OPERATIONS
 %%%===================================================================
 
+add_trip(Pid, Organizer, Name, Destination, Date, Seats) ->
+  T = fun() ->
+    io:format("[MNESIA] Adding trip ~p. ~n", [{Pid, Organizer, Name, Destination, Date, Seats}]),
+    mnesia:write(#trip{
+      pid = Pid,
+      organizer = Organizer,
+      name = Name,
+      destination = Destination,
+      date = Date,
+      seats = Seats,
+      partecipants = none
+    })
+    end,
+  mnesia:transaction(T).
 
+get_trip(Pid) ->
+  T = fun() ->
+    mnesia:read({trip, Pid})
+  end,
+  mnesia:transaction(T).
 
+get_trip_by_name(Name) ->
+  T = fun() ->
+    %% {pid, organizer, name, destination, date, seats, partecipants}).
+    Trip = #trip{pid='$1', organizer='$2', name='$3', destination ='$4', date = '$5', seats ='$6', partecipants ='$7'},
+    Guard = {'==', '$3', Name},
+    mnesia:select(trip, [{Trip, [Guard], [['$1', '$2', '$3', '$4', '$5', '$6', '$7']]}])
+      end,
+  mnesia:transaction(T).
+
+reset_trips() ->
+  T = fun() ->
+    mnesia:clear_table(trip)
+  end,
+  mnesia:transaction(T).

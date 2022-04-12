@@ -51,6 +51,22 @@ listener_server_loop() ->
   {From, delete, Username} ->
    io:format("[LISTENER] Received a request for deleting user ~p.~n", [Username]),
    Result = erlang_server_app:delete_request(Username),
+   From ! {self(), Result};
+  {From, create_trip, {Organizer, Name, Destination, Date, Seats}} ->
+   io:format("[LISTENER] Received a request for creating a new trip.~n"),
+   Result = erlang_server_app:create_trip_request(Organizer, Name, Destination, Date, Seats),
+   From ! {self(), Result};
+  {From, get_trips} ->
+   io:format("[LISTENER] Received a request for getting available trips.~n"),
+   Result = erlang_server_app:get_trips_request(),
+   From ! {self(), Result};
+  {From, get_trip_by_name, Name} ->
+   io:format("[LISTENER] Received a request for getting a trips by name.~n"),
+   Result = erlang_server_app:trip_by_name(Name),
+   From ! {self(), Result};
+  {From, reset_trips} ->
+   io:format("[LISTENER] Received a request for delete available trips.~n"),
+   Result = erlang_server_app:reset_trips(),
    From ! {self(), Result}
  end,
  listener_server_loop().

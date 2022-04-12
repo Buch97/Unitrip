@@ -1,0 +1,9 @@
+// show content of tables
+    rp(ets:tab2list(user)).
+    rp(ets:tab2list(trip)).
+
+// start main_server and loop_server
+     loop_server:init_listener().
+
+// create new trip
+    loop_server ! {self(), create_trip, {matteo, 1, 'santa croce', '10/02/2023', 10}}.
