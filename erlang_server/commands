@@ -6,4 +6,7 @@
      loop_server:init_listener().
 
 // create new trip
-    loop_server ! {self(), create_trip, {matteo, 1, 'santa croce', '10/02/2023', 10}}.
+    loop_server ! {self(), create_trip, {matteo, 'gita', 'Pisa', '10/02/2023', 10}}.
+
+// clear table
+    loop_server ! {self(), reset_trips}.

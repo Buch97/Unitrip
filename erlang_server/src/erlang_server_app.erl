@@ -94,10 +94,10 @@ handle_call({get_trip_by_name, Name}, _From, _ServerState) ->
     Result = mnesia_db:get_trip_by_name(Name),
     io:format("[MAIN SERVER] Result of get_trips_by_name: ~p. ~n", [Result]),
     {reply, Result, _ServerState};
-handle_call({reset_trips}, _From, ServerState) ->
+handle_call({reset_trips}, _From, _ServerState) ->
     Result = mnesia_db:reset_trips(),
     NewState = [],
-    io:format("[MAIN SERVER] Result of get_trips_by_name: ~p. ~n", [Result]),
+    io:format("[MAIN SERVER] Result of reset_trips: ~p. ~n", [Result]),
     {reply, Result, NewState}.
 
 
@@ -106,7 +106,6 @@ handle_call({reset_trips}, _From, ServerState) ->
 %%%-------------------------------------------------------------------
 
 lists_trips([], Result) ->
-    io:format("[MAIN SERVER] Result value: ~p. ~n", [Result]),
     Result;
 lists_trips([H|T], Result) ->
     Trip = mnesia_db:get_trip(H),
