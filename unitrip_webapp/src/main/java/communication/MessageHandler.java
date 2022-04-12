@@ -13,7 +13,7 @@ import java.util.List;
 //in questo modulo si devono inoltratre i messaggi di richiesta dei vari client al server di erlang
 public class MessageHandler {
     private static final String serverNode = "server@localhost";
-    private static final String serverPID = "otp_server";
+    private static final String serverPID = "loop_server";
 
     public String register_message(HttpSession s, User user) throws OtpErlangDecodeException, OtpErlangExit {
         /*OtpErlangMap otpErlangMap = new OtpErlangMap(
@@ -21,6 +21,7 @@ public class MessageHandler {
                 new OtpErlangObject[]{new OtpErlangString(user.getUsername()), new OtpErlangString(user.getPassword())});*/
         OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(user.getUsername()),
                 new OtpErlangString(user.getPassword())});
+        System.out.println("QUI");
         send(s, serverPID, new OtpErlangAtom("register"), otpErlangTuple);
         return receiveResponse(s);
     }
@@ -58,16 +59,19 @@ public class MessageHandler {
         return receiveList(s);
     }
 
-    private void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom) {
+    public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom) {
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println(otpMbox.self());
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom});
         otpMbox.send(serverPID, serverNode, request);
     }
 
     public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangTuple otpErlangTuple){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println("Mbox creata");
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangTuple});
         otpMbox.send(serverPID, serverNode, request);
+        System.out.println("Inviata");
     }
 
     public String receiveResponse(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
@@ -76,8 +80,9 @@ public class MessageHandler {
         OtpErlangObject message = otpMbox.receive();
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
-            status = (OtpErlangAtom) (responseTuple).elementAt(0); //vado a vedere solo l'esito della mia richiesta
+            status = (OtpErlangAtom) (responseTuple).elementAt(1); //vado a vedere solo l'esito della mia richiesta
         }
+        System.out.println(status.toString()); //ricevo {atomic,ok} perchè?
         return status.toString();
     }
 
