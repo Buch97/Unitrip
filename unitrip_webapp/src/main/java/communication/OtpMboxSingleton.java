@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 public class OtpMboxSingleton {
-    private static final String cookie = "abcde";
+    private static final String cookie = "unitrip";
     private static OtpNode otpNode = null;
     private OtpMbox otpMbox;
 
@@ -37,7 +37,6 @@ public class OtpMboxSingleton {
                 e.printStackTrace();
             }
         }
-
         return ret.otpMbox;
     }
 }
