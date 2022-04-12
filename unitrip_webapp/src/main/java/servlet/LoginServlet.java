@@ -28,9 +28,6 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        System.out.println("DoPost Login");
-        System.out.println("username: " + username + "\npassword: " + password);
-
         String allowLogin = "";
         try {
             allowLogin  = new MessageHandler().login_message(request.getSession(), new User(username, password));
@@ -40,12 +37,11 @@ public class LoginServlet extends HttpServlet {
 
         if (Objects.equals(allowLogin, "ok")) {
             request.getSession().setAttribute("username", username);
-            request.getSession().removeAttribute("loginStatus");
-            System.out.println("Login succeded");
-            response.sendRedirect(request.getContextPath() + "/MainMenuServlet");
+            //request.getSession().removeAttribute("loginStatus");
+            response.sendRedirect(request.getContextPath() + "/HomepageServlet");
         } else {
             System.out.println("Login failed");
-            request.getSession().setAttribute("loginStatus", "error");
+            //request.getSession().setAttribute("loginStatus", "error");
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
             requestDispatcher.forward(request, response);
         }

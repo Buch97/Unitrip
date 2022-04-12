@@ -14,25 +14,21 @@
 <body>
 <div>
     <h1>Compile this form to create a new Trip</h1>
-    <form action="<%=request.getContextPath()%>/HomepageServlet" method="post">
+    <form action="<%=request.getContextPath()%>/NewTripServlet" method="post">
         <ul class="form-style-1">
-            <li><label>Destination <span class="required">*</span></label><input type="text" name="field1" class="field-divided" placeholder="city" /> </li>
+            <li><label>Destination <span class="required">*</span></label><input type="text" name="destination" class="field-divided" placeholder="city" /> </li>
             <li>
-                <label>Contact <span class="required">*</span></label>
-                <input type="email" name="field2" class="field-long" />
+                <label>Founder<span class="required">*</span> </label>
+                <input type="text" name="founder" class="field-long" value="<%=request.getSession().getAttribute("username")%>" disabled/>
             </li>
-            <li><label>Available seats <span class="required">*</span></label><input type="number" name="field3" class="field-divided" placeholder="0" /> </li>
+            <li><label>Available seats <span class="required">*</span></label><input type="number" name="seats" class="field-divided" placeholder="0" /> </li>
             <li>
-                <label >Trip date <span class="required">*</span></label>
-                <input type="date" id="trip_date" name="field4" class="field-divided">
-            </li>
-            <li>
-                <label >Expiration date for subscriptions <span class="required">*</span></label>
-                <input type="date" id="sub_date" name="field5" class="field-divided">
+                <label>Trip date <span class="required">*</span></label>
+                <input type="date" id="trip_date" name="date" class="field-divided">
             </li>
             <li>
-                <label>Description <span class="required">*</span></label>
-                <textarea name="field5" id="field6" class="field-long field-textarea"></textarea>
+                <label>Description </label>
+                <textarea name="description" id="field6" class="field-long field-textarea"></textarea>
             </li>
             <li>
                 <input type="submit" value="Publish" />
