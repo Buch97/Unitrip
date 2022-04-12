@@ -19,14 +19,20 @@ init_trip(Organizer, Name, Destination, Date, Seats) ->
 listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
   receive
     {From, new_partecipant, Username} ->
-      case Seats /= 0 and mnesia_db:check_user_present(Username) == {atomic_true} of
+      case Seats /= 0 of
         true ->
-          NewSeats = Seats - 1,
-          NewListPartecipants = Partecipants ++ [Username],
-          io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
-          io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
-          From ! {self(), true},
-          listener_trip(Organizer, Name, Destination, Date, NewSeats, NewListPartecipants);
+          case mnesia_db:check_user_present(Username) of
+            {atomic, true} ->
+              NewSeats = Seats - 1,
+              NewListPartecipants = Partecipants ++ [Username],
+              io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
+              io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
+              From ! {self(), true},
+              listener_trip(Organizer, Name, Destination, Date, NewSeats, NewListPartecipants);
+            _ ->
+              io:format("[TRIP PROCESS] User ~p not present in the database. ~n", [Username]),
+              listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants)
+          end;
         false ->
           io:format("[TRIP PROCESS] No more seats avaialable. ~n"),
           From ! {self(), false},
