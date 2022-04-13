@@ -65,7 +65,10 @@ listener_server_loop() ->
   {From, reset_trips} ->
    io:format("[LISTENER] Received a request for delete available trips.~n"),
    Result = erlang_server_app:reset_trips(),
-   From ! {self(), Result}
+   From ! {self(), Result};
+  {From, delete_trip} ->
+   Result = erlang_server_app:update_server_state(From),
+   listener_server_loop()
  end,
  listener_server_loop().
 

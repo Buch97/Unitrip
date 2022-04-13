@@ -4,6 +4,7 @@
 %%% @doc
 %%% @end
 %%%-------------------------------------------------------------------
+
 -module(trip).
 -author("matteo").
 
@@ -26,9 +27,9 @@ listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
               NewSeats = Seats - 1,
               NewListPartecipants = Partecipants ++ [Username],
               mnesia_db:update_partecipants(NewListPartecipants, self()),
-              mnesia_db:update_seats(NewSeats, self()),
+              %% mnesia_db:update_seats(NewSeats, self()),
               io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
-              io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
+              %% io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
               From ! {self(), true},
               listener_trip(Organizer, Name, Destination, Date, NewSeats, NewListPartecipants);
             _ ->
@@ -52,6 +53,7 @@ listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
       case erlang:system_time(1000) > Date of
         true ->
           mnesia_db:store_trip(self(), Seats, Partecipants),
+          loop_server ! {self(), delete_trip},
           io:format("[TRIP PROCESS] Trip expired, information stored in the database. ~n"),
           exit(self(), kill);
         false ->

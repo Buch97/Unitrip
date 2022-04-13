@@ -12,7 +12,7 @@
 -import(mnesia_db, [start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2]).
 -import(trip, [listener_trip/6]).
 -export([start_main_server/0, register_request/2, init/1, handle_call/3, login_request/2, delete_request/1,
-    create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2]).
+    create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2, update_server_state/1]).
 
 %%%-------------------------------------------------------------------
 %%% API FUNCTIONS
@@ -49,6 +49,9 @@ get_trips_request() ->
 
 trip_by_name(Name) ->
     gen_server:call(main_server, {get_trip_by_name, Name}).
+
+update_server_state(From) ->
+    gen_server:call(main_server, {delete_trip, From}).
 
 reset_trips() ->
     gen_server:call(main_server, {reset_trips}).
@@ -106,7 +109,11 @@ handle_call({reset_trips}, _From, _ServerState) ->
     Result = mnesia_db:reset_trips(),
     NewState = [],
     io:format("[MAIN SERVER] Result of reset_trips: ~p. ~n", [Result]),
-    {reply, Result, NewState}.
+    {reply, Result, NewState};
+handle_call({delete_trip, Pid}, _From, ServerState) ->
+    io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
+    NewServerState = lists:delete(Pid, ServerState),
+    io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]).
 
 handle_cast(reset, ServerState) ->
     {noreply, ServerState}.
