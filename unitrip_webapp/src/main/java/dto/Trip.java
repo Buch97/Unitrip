@@ -94,33 +94,34 @@ public class Trip {
     public static Trip parseErlang(OtpErlangList elem) throws OtpErlangRangeException, ParseException {
         OtpErlangTuple record = (OtpErlangTuple) elem.elementAt(0);
         System.out.println("RECORD --> " + record);
-        ArrayList<String> participants = null;
-        String destination = record.elementAt(4).toString().replace("'","");
+        ArrayList<String> participants = new ArrayList<>();
+        String destination = record.elementAt(4).toString().replace('"',' ');
         System.out.println("DEST:" + destination);
         OtpErlangPid pid = ((OtpErlangPid) record.elementAt(1));
         System.out.println("PID: "+ pid);
-        String dateErlang = record.elementAt(5).toString().replace("'","");
-        //LocalDate date = Instant.ofEpochMilli(Long.parseLong(dateErlang)).atZone(ZoneId.systemDefault()).toLocalDate();
+        long dateErlang = Long.parseLong(String.valueOf(record.elementAt(5)));
+        System.out.println("DAta in milli: " + dateErlang);
+        LocalDate date = Instant.ofEpochMilli(dateErlang).atZone(ZoneId.systemDefault()).toLocalDate();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate date = LocalDate.parse(dateErlang, format);
+        //LocalDate date = LocalDate.parse(dateErlang, format);
         System.out.println("DATE: " + date);
 
-        String founder = record.elementAt(2).toString();
+        String founder = record.elementAt(2).toString().replace('"',' ');
         System.out.println("FOUNDER: " + founder);
         int seats = Integer.parseInt(String.valueOf(record.elementAt(6)));
         System.out.println("SEATS: " + seats);
-        String check = record.elementAt(7).toString();
-        System.out.println(record.elementAt(7).toString());
-        //if(Objects.equals(record.elementAt(7).toString(), "none"))
-        //OtpErlangList erlParticipants = (OtpErlangList) (record.elementAt(7));
-
-        /*for (OtpErlangObject obj : erlParticipants) {
-            String user = obj.toString();
-            if(!Objects.equals(user, "none"))
-                participants.add(user);
-        }*/
-
-        System.out.println("CREA TRIP");
+        if(Objects.equals(record.elementAt(7).toString(), "none"))
+            participants = null;
+        else {
+            OtpErlangList list = (OtpErlangList) record.elementAt(7);
+            System.out.println("LIST: " + list);
+            for (OtpErlangObject person : list) {
+                System.out.println(person.toString());
+                participants.add(person.toString());
+            }
+            System.out.println("LEN: " + participants.size());
+            System.out.println("ARR: " + participants);
+        }
         return  new Trip(pid, destination, date, founder, seats, participants);
     }
 

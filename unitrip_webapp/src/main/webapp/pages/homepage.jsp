@@ -61,10 +61,14 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h1 class="fw-bolder"><%= trip.getDestination()%></h1>
-                            <h3><%=trip.getDate()%>></h3>
-                            <h3>Founder: <%=trip.getFounder()%>></h3>
+                            <h3><%=trip.getDate()%></h3>
+                            <h3>Founder: <%=trip.getFounder()%></h3>
                             <!--<h3>From: Bologna</h3>!-->
-                            <h3>Seats: <%//=trip.getParticipants().size()%>/<%=trip.getSeats()%>></h3>
+                            <% if(trip.getParticipants()==null){%>
+                            <h3>Seats: <%=trip.getSeats()%>/<%=trip.getSeats()%></h3>
+                            <%} else{%>
+                            <h3>Seats: <%=trip.getSeats()-trip.getParticipants().size()%>/<%=trip.getSeats()%></h3>
+                            <%}%>
                             <% /*File myObj = new File("subscriptions.txt");
                                 FileWriter myWriter = new FileWriter("subscriptions.txt");
                                 for(String user : trip.getParticipants())
@@ -76,7 +80,7 @@
                         </div>
                         <div class="text-center">
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
-                                <!--<input type="hidden" name="trip" value="<%//trip.getId()%>"> -->
+                                <!--<input type="hidden" name="pid" value="<%//=trip.getPid()%>"> -->
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <% //if(!trip.getParticipants().contains(request.getSession().getAttribute("username"))){%>
                                 <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
