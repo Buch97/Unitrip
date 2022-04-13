@@ -2,13 +2,16 @@ package dto;
 
 import com.ericsson.otp.erlang.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 public class Trip {
-    int id;
+    OtpErlangPid pid;
     String destination;
     LocalDate date;
     String founder;
@@ -23,7 +26,8 @@ public class Trip {
         this.seats = seats;
     }
 
-    public Trip(String destination, LocalDate date, String founder, int seats, ArrayList<String> participants) {
+    public Trip(OtpErlangPid pid, String destination, LocalDate date, String founder, int seats, ArrayList<String> participants) {
+        this.pid = pid;
         this.destination = destination;
         this.founder = founder;
         this.date = date;
@@ -31,12 +35,20 @@ public class Trip {
         this.participants = participants;
     }
 
-    public int getId() {
+    /*public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
+    }*/
+
+    public OtpErlangPid getPid() {
+        return pid;
+    }
+
+    public void setPid(OtpErlangPid pid) {
+        this.pid = pid;
     }
 
     public String getFounder() {
@@ -79,28 +91,37 @@ public class Trip {
         this.participants = particpants;
     }
 
-    public static Trip parseErlang(OtpErlangList elem) throws OtpErlangRangeException {
+    public static Trip parseErlang(OtpErlangList elem) throws OtpErlangRangeException, ParseException {
+        OtpErlangTuple record = (OtpErlangTuple) elem.elementAt(0);
+        System.out.println("RECORD --> " + record);
         ArrayList<String> participants = null;
-        int id = ((OtpErlangInt) elem.elementAt(0)).intValue();
-        String destination = ((OtpErlangString) elem.elementAt(1)).stringValue();
-        String dateErlang = ((OtpErlangString) elem.elementAt(2)).stringValue();
-        String founder = ((OtpErlangString) elem.elementAt(3)).stringValue();
-        int seats = ((OtpErlangInt) elem.elementAt(0)).intValue();
-        OtpErlangList erlParticipants = (OtpErlangList) (elem.elementAt(4));
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("d MMMM, yyyy");
-        LocalDate date = getDateFromString(dateErlang, format);
+        String destination = record.elementAt(4).toString().replace("'","");
+        System.out.println("DEST:" + destination);
+        OtpErlangPid pid = ((OtpErlangPid) record.elementAt(1));
+        System.out.println("PID: "+ pid);
+        String dateErlang = record.elementAt(5).toString().replace("'","");
+        //LocalDate date = Instant.ofEpochMilli(Long.parseLong(dateErlang)).atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate date = LocalDate.parse(dateErlang, format);
+        System.out.println("DATE: " + date);
 
-        for (OtpErlangObject obj : erlParticipants) {
+        String founder = record.elementAt(2).toString();
+        System.out.println("FOUNDER: " + founder);
+        int seats = Integer.parseInt(String.valueOf(record.elementAt(6)));
+        System.out.println("SEATS: " + seats);
+        String check = record.elementAt(7).toString();
+        System.out.println(record.elementAt(7).toString());
+        //if(Objects.equals(record.elementAt(7).toString(), "none"))
+        //OtpErlangList erlParticipants = (OtpErlangList) (record.elementAt(7));
+
+        /*for (OtpErlangObject obj : erlParticipants) {
             String user = obj.toString();
-            participants.add(user);
-        }
+            if(!Objects.equals(user, "none"))
+                participants.add(user);
+        }*/
 
-        return  new Trip(destination, date, founder, seats, participants);
-    }
-
-    private static LocalDate getDateFromString(String dateErlang, DateTimeFormatter format) {
-        LocalDate dateTime = LocalDate.parse(dateErlang, format);
-        return dateTime;
+        System.out.println("CREA TRIP");
+        return  new Trip(pid, destination, date, founder, seats, participants);
     }
 
 
