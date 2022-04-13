@@ -35,14 +35,15 @@ public class NewTripServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //azione post sul form del trip
         String destination = request.getParameter("destination");
-        String founder = request.getParameter("founder");
+        String founder = (String) request.getSession().getAttribute("username");
+        System.out.println("Founder: " + founder);
         int seats = Integer.parseInt(request.getParameter("seats"));
         String success = "";
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date date = formatter.parse(request.getParameter("date"));
-            System.out.println(date.getTime());
+            System.out.println("Data in millis: " + date.getTime());
             success  = new MessageHandler().create_trip(request.getSession(), destination, date.getTime(), founder, seats);
             System.out.println("RIUSCITA");
         } catch (OtpErlangDecodeException | OtpErlangExit | ParseException e) {
@@ -52,7 +53,7 @@ public class NewTripServlet extends HttpServlet {
             System.out.println("Exception: " + e);
         }
 
-        if (Objects.equals(success, "true")) {
+        if (Objects.equals(success, "ok")) {
             response.sendRedirect(request.getContextPath() + "/HomepageServlet");
         } else {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/new_trip_form.jsp");

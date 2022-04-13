@@ -1,8 +1,6 @@
 package servlet;
 
-import com.ericsson.otp.erlang.OtpErlangDecodeException;
-import com.ericsson.otp.erlang.OtpErlangExit;
-import com.ericsson.otp.erlang.OtpErlangRangeException;
+import com.ericsson.otp.erlang.*;
 import communication.MessageHandler;
 import dto.Trip;
 import dto.TripList;
@@ -22,8 +20,7 @@ public class HomepageServlet extends HttpServlet {
         ArrayList<Trip> tripList;
         try { //recupero la lista dei trip attivi e la setto nella sessione
             tripList = new MessageHandler().get_active_trips(request.getSession());
-            System.out.println("RITORNO QUI: " + tripList);
-            System.out.println(tripList.get(0).getDestination());
+            //System.out.println(tripList.get(0).getDestination());
             request.setAttribute("tripList", tripList);
             request.getSession().setAttribute("tripList", tripList);
         } catch (OtpErlangDecodeException | OtpErlangExit | OtpErlangRangeException | ParseException e) {
@@ -38,11 +35,11 @@ public class HomepageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String username = request.getParameter("username");
-        int trip = Integer.parseInt(request.getParameter("trip"));
+        String pid = "#Pid<" + request.getParameter("pid") + ">";
         if(request.getParameter("joinButton") != null) {
             String success = "";
             try {
-                success = new MessageHandler().add_participant(request.getSession(), username, trip);
+                success = new MessageHandler().add_participant(request.getSession(), username, pid);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
@@ -50,7 +47,7 @@ public class HomepageServlet extends HttpServlet {
         else if(request.getParameter("leaveButton") != null){
             String success = "";
             try {
-                success = new MessageHandler().remove_participant(request.getSession(), username, trip);
+                success = new MessageHandler().remove_participant(request.getSession(), username, pid);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
