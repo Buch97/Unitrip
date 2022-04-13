@@ -26,15 +26,18 @@ start_link() ->
 %%                  type => worker(),       % optional
 %%                  modules => modules()}   % optional
 
-init([]) ->
-  io:format(" [SUPERVISOR] Init function started ~n"),
-  SupFlags = #{strategy => one_for_all,
-                 intensity => 0,
-                 period => 1},
+init(_Args) ->
+  io:format("[SUPERVISOR] Init function started ~n"),
+  SupFlags = #{strategy => one_for_one,
+                 intensity => 1,
+                 period => 5},
   LoopServer = #{id => loop_server,
     start => {loop_server, init_listener, []},
     restart => permanent},
-  ChildSpecs = [LoopServer],
+  Monitor = #{id => monitor,
+    start => {monitor, start_monitor, []},
+    restart => permanent},
+  ChildSpecs = [LoopServer, Monitor],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

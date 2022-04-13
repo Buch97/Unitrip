@@ -25,6 +25,7 @@ listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
             {atomic, true} ->
               NewSeats = Seats - 1,
               NewListPartecipants = Partecipants ++ [Username],
+              mnesia_db:update_partecipants(NewListPartecipants),
               io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
               io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
               From ! {self(), true},

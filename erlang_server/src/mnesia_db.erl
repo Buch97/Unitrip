@@ -12,14 +12,13 @@
 %%% API
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
-  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2]).
+  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2]).
 
 -record(user, {username, password}).
 -record(trip, {pid, organizer, name, destination, date, seats, partecipants}).
 
 start_mnesia() ->
   mnesia:create_schema([node()]),
-  io:format("[MNESIA] New schema created. ~n"),
   %% application:set_env(mnesia, dir, "~/mnesia_db_storage"),
   mnesia:start(),
   case mnesia:wait_for_tables([trip, user], 5000) == ok of
@@ -27,6 +26,7 @@ start_mnesia() ->
       io:format("[MNESIA] Mnesia started correctly. ~n"),
       ok;
     false ->
+      io:format("[MNESIA] New schema created. ~n"),
       mnesia:create_table(user,
         [{attributes, record_info(fields, user)}, {disc_copies, [node()]}]),
       io:format("[MNESIA] Table user created. ~n"),
@@ -141,6 +141,13 @@ update_seats(NewValue, Pid) ->
   T = fun() ->
     [Record] = mnesia:read({trip, Pid}),
     mnesia:write(Record#trip{seats = NewValue})
+      end,
+  mnesia:transaction(T).
+
+update_date(NewValue, Pid) ->
+  T = fun() ->
+    [Record] = mnesia:read({trip, Pid}),
+    mnesia:write(Record#trip{date = NewValue})
       end,
   mnesia:transaction(T).
 

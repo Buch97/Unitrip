@@ -10,3 +10,6 @@
 
 // clear table
     loop_server ! {self(), reset_trips}.
+
+// start from supervisor
+    erlang_erver_sup:start_link().
