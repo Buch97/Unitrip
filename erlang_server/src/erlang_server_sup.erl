@@ -12,9 +12,9 @@
 
 start_link() ->
   %% start_link(ServerName, Module, Args, Options)
-  Supervisor = supervisor:start_link({global, ?MODULE}, ?MODULE, []),
-  io:format("[SUPERVISOR] Supervisor spawned."),
-  Supervisor.
+  {ServerState, Pid} = supervisor:start_link({global, ?MODULE}, ?MODULE, []),
+  io:format("[SUPERVISOR] Supervisor spawned with result ~p.", [{ServerState, Pid}]),
+  Pid.
 
 %% sup_flags() = #{strategy => strategy(),         % optional
 %%                 intensity => non_neg_integer(), % optional
@@ -31,13 +31,13 @@ init(_Args) ->
   SupFlags = #{strategy => one_for_one,
                  intensity => 1,
                  period => 5},
-  LoopServer = #{id => loop_server,
-    start => {loop_server, init_listener, []},
+  MainServer = #{id => erlang_server_app,
+    start => {erlang_server_app, start_main_server, []},
     restart => permanent},
-  Monitor = #{id => monitor,
-    start => {monitor, start_monitor, []},
-    restart => permanent},
-  ChildSpecs = [LoopServer, Monitor],
+  % Monitor = #{id => monitor_trip,
+  %   start => {monitor_trip, start_monitor, []},
+  %   restart => permanent},
+  ChildSpecs = [MainServer],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

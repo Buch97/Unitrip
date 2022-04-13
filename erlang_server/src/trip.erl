@@ -14,7 +14,9 @@ interval_milliseconds()-> 1000.
 init_trip(Organizer, Name, Destination, Date, Seats) ->
   io:format("[TRIP_PROCESS] Starting a new erlang process.~n"),
   erlang:send_after(interval_milliseconds(), self(), {evaluate_exp_date}),
-  listener_trip(Organizer, Name, Destination, Date, Seats, []).
+  Partecipants = mnesia_db:get_partecipant(self()),
+  Seats = mnesia_db:get_seats(self()),
+  listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants).
 
 listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
   receive
@@ -25,7 +27,8 @@ listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
             {atomic, true} ->
               NewSeats = Seats - 1,
               NewListPartecipants = Partecipants ++ [Username],
-              mnesia_db:update_partecipants(NewListPartecipants),
+              mnesia_db:update_partecipants(NewListPartecipants, self()),
+              mnesia_db:update_seats(NewSeats, self()),
               io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
               io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
               From ! {self(), true},
@@ -48,7 +51,7 @@ listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants) ->
       io:format("[TRIP PROCESS] Available seats: ~p. ~n", [Seats]),
       listener_trip(Organizer, Name, Destination, Date, Seats, Partecipants);
     {evaluate_exp_date} ->
-      case erlang:system_time() > Date of
+      case erlang:system_time(1000) > Date of
         true ->
           mnesia_db:store_trip(self(), Seats, Partecipants),
           io:format("[TRIP PROCESS] Trip expired, information stored in the database. ~n"),

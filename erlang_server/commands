@@ -12,4 +12,7 @@
     loop_server ! {self(), reset_trips}.
 
 // start from supervisor
-    erlang_erver_sup:start_link().
+    erlang_server_sup:start_link().
+
+// start from main
+    erlang_server_app:start_main_server().

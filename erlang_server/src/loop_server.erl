@@ -23,8 +23,7 @@
 %%--------------------------------------------------------------------
 
 init_listener() ->
- io:format("[LISTENER] Starting OTP gen_server. ~n"),
- erlang_server_app:start_main_server(),
+ %monitor:start_monitor(),
  LoopServer = spawn(fun() -> listener_server_loop() end ),
  io:format("[LISTENER] Loop server spawned with pid ~p. ~n", [LoopServer]),
  register('loop_server', LoopServer),

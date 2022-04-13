@@ -6,7 +6,7 @@
 %%% @end
 %%% Created : 12. apr 2022 16:17
 %%%-------------------------------------------------------------------
--module(monitor).
+-module(monitor_trip).
 -author("matteo").
 
 %% API
@@ -14,8 +14,8 @@
 
 start_monitor() ->
   io:format("[MONITOR] Monitor started with pid ~p. ~n", [self()]),
-  register(monitor, self()),
-  monitor_loop().
+  register('monitor_trip', self()).
+  %monitor_loop().
 
 monitor_loop() ->
   receive

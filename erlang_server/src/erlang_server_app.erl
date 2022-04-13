@@ -19,10 +19,17 @@
 %%%-------------------------------------------------------------------
 
 start_main_server() ->
+    io:format("[MAIN SERVER] Starting OTP gen_server. ~n"),
+    Result = gen_server:start({local, main_server}, ?MODULE, [], []),
+    io:format("[MAIN_SERVER] OTP gen_server server started with result ~p.~n", [Result]),
     mnesia_db:start_mnesia(),
-    Res = gen_server:start({local, main_server}, ?MODULE, [], []),
-    io:format("[MAIN_SERVER] OTP gen_server server started with result ~p.~n", [Res]),
-    Res.
+    io:format("[MAIN SERVER] Starting listener. ~n"),
+    loop_server:init_listener(),
+    io:format("[MAIN SERVER] Starting monitor. ~n"),
+    monitor_trip:start_monitor(),
+    io:format("[MAIN SERVER] Spawning trips processes. ~n"),
+    spawn_trips(),
+    Result.
 
 register_request(Username, Password) ->
     gen_server:call(main_server, {register, Username, Password}).
@@ -113,3 +120,6 @@ lists_trips([H|T], Result) ->
     Trip = mnesia_db:get_trip(H),
     NewResult = Result ++ [Trip],
     lists_trips(T, NewResult).
+
+spawn_trips() ->
+    ok.
