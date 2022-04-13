@@ -28,7 +28,8 @@ start_main_server() ->
     io:format("[MAIN SERVER] Starting monitor. ~n"),
     monitor_trip:start_monitor(),
     io:format("[MAIN SERVER] Spawning trips processes. ~n"),
-    spawn_trips(),
+    %% all'avvio vengono spawnati tanti processi quanti sono i trip attivi
+    %spawn_trips(),
     Result.
 
 register_request(Username, Password) ->

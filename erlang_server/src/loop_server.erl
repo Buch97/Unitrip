@@ -23,7 +23,6 @@
 %%--------------------------------------------------------------------
 
 init_listener() ->
- %monitor:start_monitor(),
  LoopServer = spawn(fun() -> listener_server_loop() end ),
  io:format("[LISTENER] Loop server spawned with pid ~p. ~n", [LoopServer]),
  register('loop_server', LoopServer),

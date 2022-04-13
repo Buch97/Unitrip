@@ -12,7 +12,7 @@
 %%% API
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
-  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, get_seats/1, get_partecipant/1, update_pid/2]).
+  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, get_seats/1, get_partecipants/1, update_pid/2]).
 
 -record(user, {username, password}).
 -record(trip, {pid, organizer, name, destination, date, seats, partecipants}).
@@ -176,16 +176,16 @@ get_seats(Pid) ->
     %% {pid, organizer, name, destination, date, seats, partecipants}).
     Trip = #trip{pid='$1', organizer='$2', name='$3', destination ='$4', date = '$5', seats ='$6', partecipants ='$7'},
     Guard = {'==', '$1', Pid},
-    mnesia:select(trip, [{Trip, [Guard], [['$6']]}])
+    mnesia:select(trip, [{Trip, [Guard], ['$6']}])
       end,
   mnesia:transaction(T).
 
-get_partecipant(Pid) ->
+get_partecipants(Pid) ->
   T = fun() ->
     %% {pid, organizer, name, destination, date, seats, partecipants}).
     Trip = #trip{pid='$1', organizer='$2', name='$3', destination ='$4', date = '$5', seats ='$6', partecipants ='$7'},
     Guard = {'==', '$1', Pid},
-    mnesia:select(trip, [{Trip, [Guard], [['$7']]}])
+    mnesia:select(trip, [{Trip, [Guard], ['$7']}])
       end,
   mnesia:transaction(T).
 

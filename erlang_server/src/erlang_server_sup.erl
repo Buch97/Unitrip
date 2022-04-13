@@ -13,7 +13,7 @@
 start_link() ->
   %% start_link(ServerName, Module, Args, Options)
   {ServerState, Pid} = supervisor:start_link({global, ?MODULE}, ?MODULE, []),
-  io:format("[SUPERVISOR] Supervisor spawned with result ~p.", [{ServerState, Pid}]),
+  io:format("[SUPERVISOR] Supervisor spawned with result ~p.~n", [{ServerState, Pid}]),
   Pid.
 
 %% sup_flags() = #{strategy => strategy(),         % optional
