@@ -12,24 +12,22 @@
 -import(mnesia_db, [start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2]).
 -import(trip, [listener_trip/6]).
 -export([start_main_server/0, register_request/2, init/1, handle_call/3, login_request/2, delete_request/1,
-    create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2, update_server_state/1]).
+    create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2,
+    update_server_state/1, spawn_trips/1, update_active_trips/2]).
 
 %%%-------------------------------------------------------------------
 %%% API FUNCTIONS
 %%%-------------------------------------------------------------------
 
 start_main_server() ->
+    mnesia_db:start_mnesia(),
     io:format("[MAIN SERVER] Starting OTP gen_server. ~n"),
     Result = gen_server:start({local, main_server}, ?MODULE, [], []),
     io:format("[MAIN_SERVER] OTP gen_server server started with result ~p.~n", [Result]),
-    mnesia_db:start_mnesia(),
     io:format("[MAIN SERVER] Starting listener. ~n"),
     loop_server:init_listener(),
     io:format("[MAIN SERVER] Starting monitor. ~n"),
     monitor_trip:start_monitor(),
-    io:format("[MAIN SERVER] Spawning trips processes. ~n"),
-    %% all'avvio vengono spawnati tanti processi quanti sono i trip attivi
-    %spawn_trips(),
     Result.
 
 register_request(Username, Password) ->
@@ -65,7 +63,11 @@ reset() ->
 
 %The server state maintain the list of the active trips
 init([]) ->
-    {ok, []}.   % general format: {ok, InitialState}
+    io:format("[MAIN SERVER] Spawning trips processes. ~n"),
+    %% all'avvio vengono spawnati tanti processi quanti sono i trip attivi
+    ServerState = spawn_trips([]),
+    io:format("[MAIN SERVER] InistialState: ~p. ~n", [ServerState]),
+    {ok, ServerState}.   % general format: {ok, InitialState}
 
 handle_call({register, Username, Password}, _From, _ServerState) ->
     Result = mnesia_db:add_user(Username, Password),
@@ -79,8 +81,8 @@ handle_call({delete, Username}, _From, _ServerState) ->
     Result = mnesia_db:delete_user(Username),
     io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
     {reply, Result, _ServerState};
-handle_call({create_trip, Organizer, Name, Destination, Date, Seats}, _From, ServerState) ->
-    Pid = spawn(fun() -> trip:init_trip(Organizer, Name, Destination, Date, Seats) end),
+handle_call({create_trip, Name, Organizer, Destination, Date, Seats}, _From, ServerState) ->
+    Pid = spawn(fun() -> trip:init_trip(Name, Organizer, Destination, Date, Seats, []) end),
     io:format("[MAIN_SERVER] New erlang node spawned with pid ~p. ~n", [Pid]),
     Result = mnesia_db:add_trip(Pid, Organizer, Name, Destination, Date, Seats),
     io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
@@ -129,5 +131,24 @@ lists_trips([H|T], Result) ->
     NewResult = Result ++ [Trip],
     lists_trips(T, NewResult).
 
-spawn_trips() ->
-    ok.
+spawn_trips(ServerState) ->
+    Result = mnesia_db:get_active_trips(),
+    io:format("[MAIN SERVER] Active trips: ~p. ~n", [Result]),
+    update_active_trips(element(2, Result), ServerState).
+
+
+update_active_trips([], ServerState) ->
+    ServerState;
+update_active_trips([H|T], ServerState) ->
+    % record(trip, {pid, organizer, name, destination, date, seats, partecipants})
+    OldPid = lists:nth(1, H),
+    Organizer = lists:nth(2, H),
+    TripName = lists:nth(3, H),
+    Destination = lists:nth(4, H),
+    Date = lists:nth(5, H),
+    Seats = lists:nth(6, H),
+    Partecipants = lists:nth(7, H),
+    NewPid = spawn(fun() -> trip:init_trip(TripName, Organizer, Destination, Date, Seats, Partecipants) end),
+    mnesia_db:update_pid(NewPid, OldPid),
+    NewServerState = ServerState ++ [NewPid],
+    update_active_trips(T, NewServerState).

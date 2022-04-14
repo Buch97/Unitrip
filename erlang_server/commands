@@ -1,12 +1,13 @@
 // show content of tables
     rp(ets:tab2list(user)).
     rp(ets:tab2list(trip)).
+    rp(ets:tab2list(joined)).
 
 // start main_server and loop_server
      loop_server:init_listener().
 
 // create new trip
-    loop_server ! {self(), create_trip, {matteo, 'gita', 'Pisa', '10/02/2023', 10}}.
+    loop_server ! {self(), create_trip, {'gita', matteo, 'Pisa', '10/02/2023', 10}}.
 
 // clear table
     loop_server ! {self(), reset_trips}.
@@ -16,3 +17,6 @@
 
 // start from main
     erlang_server_app:start_main_server().
+
+// kill all erlang process
+    for i in `ps -ef | grep erl | awk '{print $2}'`; do echo $i; kill -9 $i; done
