@@ -17,6 +17,7 @@
     <form action="<%=request.getContextPath()%>/NewTripServlet" method="post">
         <ul class="form-style-1">
             <li><label>Destination <span class="required">*</span></label><input type="text" name="destination" class="field-divided" placeholder="city" /> </li>
+            <li><label>Trip name <span class="required">*</span></label><input type="text" name="trip_name" class="field-divided" placeholder="name" /> </li>
             <li>
                 <label>Founder<span class="required">*</span> </label>
                 <input type="text" name="founder" class="field-long" value="<%=request.getSession().getAttribute("username")%>" disabled/>

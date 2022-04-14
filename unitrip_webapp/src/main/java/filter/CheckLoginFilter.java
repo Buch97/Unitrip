@@ -16,7 +16,7 @@ public class CheckLoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
-        /*System.out.println("You have requested a page which needs login");
+       /* System.out.println("You have requested a page which needs login");
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
