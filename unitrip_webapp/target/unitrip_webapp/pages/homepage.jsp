@@ -25,9 +25,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="./resources/css/homepage.css" rel="stylesheet" />
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/homepage_websocket.js"></script>
 
 </head>
-<body>
+<body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');">
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
@@ -47,7 +48,7 @@
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
             <%
                 ArrayList<Trip> tripList = (ArrayList<Trip>) request.getAttribute("tripList");
-                System.out.println("QUI: " + tripList);
+                System.out.println("JSP HOME: " + tripList);
                 if(tripList == null || tripList.size() == 0){
             %>
             <h3>Nothing to Show<h3>
@@ -65,22 +66,23 @@
                             <h3>Founder: <%=trip.getFounder()%></h3>
                             <!--<h3>From: Bologna</h3>!-->
                             <% if(trip.getParticipants()==null){%>
-                            <h3>Seats: <%=trip.getSeats()%>/<%=trip.getSeats()%></h3>
+                            <h3>Booked Seats: 0/<%=trip.getSeats()%></h3>
                             <%} else{%>
-                            <h3>Seats: <%=trip.getSeats()-trip.getParticipants().size()%>/<%=trip.getSeats()%></h3>
-                            <%}%>
-                            <% /*File myObj = new File("subscriptions.txt");
-                                FileWriter myWriter = new FileWriter("subscriptions.txt");
+                            <h3>Booked Seats: <%=trip.getParticipants().size()%>/<%=trip.getSeats()%></h3>
+                            <% File myObj = new File("subscriptions.txt");
+                                FileWriter myWriter = new FileWriter(myObj);
                                 for(String user : trip.getParticipants())
                                     myWriter.write(user + "\n");
-                                myWriter.close();*/
+                                myWriter.close();
                             %>
-                            <h3><a href="<%//=myObj%>" download>Participants</a></h3>
+                            <h3><a href="<%=myObj%>" download>Participants</a></h3>
+                            <%}%>
                             <h3>Remaining time: 08:27:35</h3>
                         </div>
                         <div class="text-center">
+                            <%//if(trip.getParticipants().size() < trip.getSeats()){%>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
-                                <!--<input type="hidden" name="pid" value="<%//=trip.getPid()%>"> -->
+                                <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <% //if(!trip.getParticipants().contains(request.getSession().getAttribute("username"))){%>
                                 <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
@@ -88,6 +90,9 @@
                                 <!-- <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP"> -->
                                 <% //} %>
                             </form>
+                            <%//}else{%>
+                            <!--<h3> No seats available!!!</h3>-->
+                            <%//}%>
                         </div>
                     </div>
                 </div>

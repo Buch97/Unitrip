@@ -35,6 +35,7 @@ public class NewTripServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //azione post sul form del trip
         String destination = request.getParameter("destination");
+        String name = request.getParameter("trip_name");
         String founder = (String) request.getSession().getAttribute("username");
         System.out.println("Founder: " + founder);
         int seats = Integer.parseInt(request.getParameter("seats"));
@@ -44,7 +45,7 @@ public class NewTripServlet extends HttpServlet {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date date = formatter.parse(request.getParameter("date"));
             System.out.println("Data in millis: " + date.getTime());
-            success  = new MessageHandler().create_trip(request.getSession(), destination, date.getTime(), founder, seats);
+            success  = new MessageHandler().create_trip(request.getSession(), name, destination, date.getTime(), founder, seats);
             System.out.println("RIUSCITA");
         } catch (OtpErlangDecodeException | OtpErlangExit | ParseException e) {
             e.printStackTrace();

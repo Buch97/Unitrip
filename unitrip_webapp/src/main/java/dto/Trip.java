@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Trip {
-    OtpErlangPid pid;
+    String tripName;
     String destination;
     LocalDate date;
     String founder;
@@ -19,36 +19,29 @@ public class Trip {
     ArrayList<String> participants;
 
 
-    public Trip(String destination, LocalDate date, String founder, int seats) {
+    public Trip(String tripName, String destination, LocalDate date, String founder, int seats) {
+        this.tripName = tripName;
         this.destination = destination;
         this.founder = founder;
         this.date = date;
         this.seats = seats;
     }
 
-    public Trip(OtpErlangPid pid, String destination, LocalDate date, String founder, int seats, ArrayList<String> participants) {
-        this.pid = pid;
+    public Trip(String tripName, String destination, LocalDate date, String founder, int seats, ArrayList<String> participants) {
+        this.tripName = tripName;
         this.destination = destination;
-        this.founder = founder;
         this.date = date;
+        this.founder = founder;
         this.seats = seats;
         this.participants = participants;
     }
 
-    /*public int getId() {
-        return id;
+    public String getTripName() {
+        return tripName;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }*/
-
-    public OtpErlangPid getPid() {
-        return pid;
-    }
-
-    public void setPid(OtpErlangPid pid) {
-        this.pid = pid;
+    public void setTripName(String tripName) {
+        this.tripName = tripName;
     }
 
     public String getFounder() {
@@ -91,38 +84,33 @@ public class Trip {
         this.participants = particpants;
     }
 
-    public static Trip parseErlang(OtpErlangList elem) throws OtpErlangRangeException, ParseException {
-        OtpErlangTuple record = (OtpErlangTuple) elem.elementAt(0);
+    public static Trip parseErlang(OtpErlangList record) throws OtpErlangRangeException, ParseException {
         System.out.println("RECORD --> " + record);
         ArrayList<String> participants = new ArrayList<>();
-        String destination = record.elementAt(4).toString().replace('"',' ');
-        System.out.println("DEST:" + destination);
-        OtpErlangPid pid = ((OtpErlangPid) record.elementAt(1));
-        System.out.println("PID: "+ pid);
-        long dateErlang = Long.parseLong(String.valueOf(record.elementAt(5)));
+        String destination = record.elementAt(3).toString().replace('"',' ').trim();
+        System.out.println("DEST: " + destination);
+        long dateErlang = Long.parseLong(String.valueOf(record.elementAt(4)));
         System.out.println("DAta in milli: " + dateErlang);
         LocalDate date = Instant.ofEpochMilli(dateErlang).atZone(ZoneId.systemDefault()).toLocalDate();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         //LocalDate date = LocalDate.parse(dateErlang, format);
         System.out.println("DATE: " + date);
 
-        String founder = record.elementAt(2).toString().replace('"',' ');
+        String founder = record.elementAt(2).toString().replace('"',' ').trim();
         System.out.println("FOUNDER: " + founder);
-        int seats = Integer.parseInt(String.valueOf(record.elementAt(6)));
+        String tripName = record.elementAt(0).toString().replace('"',' ').trim();
+        int seats = Integer.parseInt(String.valueOf(record.elementAt(5)));
         System.out.println("SEATS: " + seats);
-        if(Objects.equals(record.elementAt(7).toString(), "none"))
-            participants = null;
-        else {
-            OtpErlangList list = (OtpErlangList) record.elementAt(7);
-            System.out.println("LIST: " + list);
-            for (OtpErlangObject person : list) {
-                System.out.println(person.toString());
-                participants.add(person.toString());
-            }
-            System.out.println("LEN: " + participants.size());
-            System.out.println("ARR: " + participants);
+        OtpErlangList list = (OtpErlangList) record.elementAt(6);
+        System.out.println("LIST: " + list);
+        for (OtpErlangObject person : list) {
+            System.out.println(person.toString());
+            participants.add(person.toString());
         }
-        return  new Trip(pid, destination, date, founder, seats, participants);
+        System.out.println("LEN: " + participants.size());
+        System.out.println("ARR: " + participants);
+
+        return  new Trip(tripName, destination, date, founder, seats, participants);
     }
 
 

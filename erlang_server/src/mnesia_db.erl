@@ -204,8 +204,7 @@ delete_trip(TripName) ->
   mnesia:transaction(T).
 
 reset_trips() ->
-  mnesia:clear_table(trip).
-
+    mnesia:clear_table(trip).
 
 %%%===================================================================
 %%% JOINED OPERATIONS
