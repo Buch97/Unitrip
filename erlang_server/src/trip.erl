@@ -15,6 +15,7 @@ interval_milliseconds()-> 1000.
 init_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
   io:format("[TRIP_PROCESS] Starting a new erlang process with pid ~p.~n", [self()]),
   erlang:send_after(interval_milliseconds(), self(), {evaluate_exp_date}),
+  %% io:format("[TRIP_PROCESS] Paramenters of the process: ~p.~n", [{Name, Organizer, Destination, Date, Seats, Partecipants}]),
   listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants).
 
 listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
@@ -26,9 +27,10 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
             {atomic, true} ->
               NewSeats = Seats - 1,
               NewListPartecipants = Partecipants ++ [Username],
-              io:format("[TRIP PROCESS] Trip Name: ~p. ~n", [Name]),
               mnesia_db:update_partecipants(NewListPartecipants, Name),
-              mnesia_db:add_joined(Username, Name),
+              Result = mnesia_db:get_joined_by_username(Username),
+              OldList = lists:nth(1, element(2, Result)),
+              mnesia_db:update_joined_list(Name, Username, OldList),
               %% mnesia_db:update_seats(NewSeats, self()),
               io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
               %% io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),

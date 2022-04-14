@@ -12,12 +12,12 @@
 %%% API
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
-  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, update_pid/2, add_joined/2,
-  get_joined_by_username/1, delete_joined/2, get_active_trips/0, delete_trip/1, get_partecipants/1]).
+  get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, update_pid/2, add_joined/1,
+  get_joined_by_username/1, delete_joined/2, get_active_trips/0, delete_trip/1, get_partecipants/1, update_joined_list/3]).
 
 -record(user, {username, password}).
 -record(trip, {name, pid, organizer, destination, date, seats, partecipants}).
--record(joined, {username, trip_name}).
+-record(joined, {username, trip_list}).
 
 start_mnesia() ->
   mnesia:create_schema([node()]),
@@ -211,15 +211,15 @@ reset_trips() ->
 %%% JOINED OPERATIONS
 %%%===================================================================
 
-add_joined(Username, TripName) ->
+add_joined(Username) ->
   T = fun() ->
     case mnesia_db:check_user_present(Username) of
       {atomic, true} ->
-        io:format("[MNESIA] Adding joined record ~p. ~n", [{Username, TripName}]),
+        io:format("[MNESIA] Adding empty list of joined trip by the user ~p. ~n", [Username]),
         mnesia:write(#joined
         {
           username = Username,
-          trip_name = TripName
+          trip_list = []
         });
       _ ->
         false
@@ -227,11 +227,20 @@ add_joined(Username, TripName) ->
       end,
   mnesia:transaction(T).
 
+update_joined_list(NewTripName, Username, OldList) ->
+  T = fun() ->
+    [Record] = mnesia:read({joined, Username}),
+    io:format("[MNESIA] VALUE OF OLDLIST: ~p.~n", [OldList]),
+    NewList = OldList ++ [NewTripName],
+    mnesia:write(Record#joined{trip_list = NewList})
+      end,
+  mnesia:transaction(T).
+
 get_joined_by_username(Username) ->
   T = fun() ->
     %% {username, trip_name}).
     io:format("[MNESIA] Getting joined trips of the user ~p. ~n", [Username]),
-    Joined = #joined{username='$1', trip_name='$2'},
+    Joined = #joined{username='$1', trip_list ='$2'},
     Guard = {'==', '$1', Username},
     mnesia:select(joined, [{Joined, [Guard], ['$2']}])
       end,

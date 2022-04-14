@@ -3,8 +3,8 @@
     rp(ets:tab2list(trip)).
     rp(ets:tab2list(joined)).
 
-// start main_server and loop_server
-     loop_server:init_listener().
+// create user
+    loop_server ! {self(), register, {a, a}}.
 
 // create new trip
     loop_server ! {self(), create_trip, {'gita', matteo, 'Pisa', '10/02/2023', 10}}.

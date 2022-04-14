@@ -9,7 +9,7 @@
 
 %% API export
 
--import(mnesia_db, [start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2]).
+-import(mnesia_db, [start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, add_joined/2]).
 -import(trip, [listener_trip/6]).
 -export([start_main_server/0, register_request/2, init/1, handle_call/3, login_request/2, delete_request/1,
     create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2,
@@ -49,7 +49,7 @@ trip_by_name(Name) ->
     gen_server:call(main_server, {get_trip_by_name, Name}).
 
 update_server_state(From) ->
-    gen_server:call(main_server, {delete_trip, From}).
+    gen_server:call(main_server, {delete_trips, From}).
 
 reset_trips() ->
     gen_server:call(main_server, {reset_trips}).
@@ -71,6 +71,7 @@ init([]) ->
 
 handle_call({register, Username, Password}, _From, _ServerState) ->
     Result = mnesia_db:add_user(Username, Password),
+    mnesia_db:add_joined(Username),
     io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
     {reply, Result, _ServerState};
 handle_call({login, Username, Password}, _From, _ServerState) ->
@@ -133,22 +134,19 @@ lists_trips([H|T], Result) ->
 
 spawn_trips(ServerState) ->
     Result = mnesia_db:get_active_trips(),
-    io:format("[MAIN SERVER] Active trips: ~p. ~n", [Result]),
     update_active_trips(element(2, Result), ServerState).
-
 
 update_active_trips([], ServerState) ->
     ServerState;
 update_active_trips([H|T], ServerState) ->
-    % record(trip, {pid, organizer, name, destination, date, seats, partecipants})
-    OldPid = lists:nth(1, H),
-    Organizer = lists:nth(2, H),
-    TripName = lists:nth(3, H),
+    % record(trip, {name, pid, organizer, destination, date, seats, partecipants})
+    TripName = lists:nth(1, H),
+    Organizer = lists:nth(3, H),
     Destination = lists:nth(4, H),
     Date = lists:nth(5, H),
     Seats = lists:nth(6, H),
     Partecipants = lists:nth(7, H),
     NewPid = spawn(fun() -> trip:init_trip(TripName, Organizer, Destination, Date, Seats, Partecipants) end),
-    mnesia_db:update_pid(NewPid, OldPid),
+    mnesia_db:update_pid(NewPid, TripName),
     NewServerState = ServerState ++ [NewPid],
     update_active_trips(T, NewServerState).
