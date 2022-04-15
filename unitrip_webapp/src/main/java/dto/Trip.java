@@ -83,6 +83,9 @@ public class Trip {
     public void setParticipants(ArrayList<String> particpants) {
         this.participants = particpants;
     }
+    public long ExpirationDate(LocalDate date){
+        return java.sql.Date.valueOf(date).getTime() - 1000*7*24*60*60;
+    }
 
     public static Trip parseErlang(OtpErlangList record) throws OtpErlangRangeException, ParseException {
         System.out.println("RECORD --> " + record);

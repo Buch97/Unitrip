@@ -26,10 +26,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="./resources/css/homepage.css" rel="stylesheet" />
-    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/homepage_websocket.js"></script>
+    <!-- <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/homepage_websocket.js"></script>-->
 
 </head>
-<body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');">
+<body><!--onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');"-->
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
@@ -78,7 +78,29 @@
                             %>
                             <h3><a href="<%=myObj%>" download>Participants</a></h3>
                             <%}%>
-                            <h3>Remaining time: 08:27:35</h3>
+                            <h3>Remaining time: <h3 id ="time_<%=trip.getTripName()%>"></h3></h3>
+                            <script type="text/javascript">
+                                //time_passing(<%//=trip.ExpirationDate(trip.getDate())%>,<%//=trip.getTripName()%>);
+                                setInterval(function() {
+
+                                    var now = new Date().getTime();
+                                    var timeleft = <%=trip.ExpirationDate(trip.getDate())%> - now;
+
+                                    var days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+                                    var hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                                    var minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+                                    var seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+
+                                    document.getElementById("time_<%=trip.getTripName()%>").innerHTML = days + "d " + hours + "h "
+                                        + minutes + "m " + seconds + "s ";
+
+                                    // If the count down is finished, write some text
+                                    if (distance < 0) {
+                                        clearInterval(x);
+                                        document.getElementById("time_<%=trip.getTripName()%>").innerHTML = "EXPIRED";
+                                    }
+                                }, 1000)
+                            </script>
                         </div>
                         <div class="text-center">
                             <%//if(trip.getParticipants().size() < trip.getSeats()){%>
@@ -114,7 +136,5 @@
 </footer>
 <!-- Bootstrap core JS-->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Core theme JS-->
-<script src="js/scripts.js"></script>
 </body>
 </html>

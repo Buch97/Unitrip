@@ -125,19 +125,6 @@ public class MessageHandler{
         return status.toString();
     }
 
-    public String receiveResponseDeletePartecipant(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpErlangAtom status = new OtpErlangAtom("");
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
-        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
-        OtpErlangObject message = otpMbox.receive();
-        System.out.println("Message: " + message);
-        if(message instanceof OtpErlangTuple){
-            status = (OtpErlangAtom) ((OtpErlangTuple) message).elementAt(1); //vado a vedere solo l'esito della mia richiesta
-        }
-        System.out.println(status.toString()); //ricevo {atomic,ok} perchè?
-        return status.toString();
-    }
-
     public OtpErlangPid receivePid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         System.out.println("MBOX CREATA ASPETTO RISPOSTA COL PID");

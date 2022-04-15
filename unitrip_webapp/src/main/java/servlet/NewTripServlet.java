@@ -37,15 +37,20 @@ public class NewTripServlet extends HttpServlet {
         String destination = request.getParameter("destination");
         String name = request.getParameter("trip_name");
         String founder = (String) request.getSession().getAttribute("username");
-        System.out.println("Founder: " + founder);
         int seats = Integer.parseInt(request.getParameter("seats"));
+        boolean error = false;
+        if ((seats <= 0) || (name == null)|| (destination == null))
+            error = true;
         String success = "";
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date date = formatter.parse(request.getParameter("date"));
+            if(date.getTime() <=  System.currentTimeMillis())
+                error = true;
             System.out.println("Data in millis: " + date.getTime());
-            success  = new MessageHandler().create_trip(request.getSession(), name, destination, date.getTime(), founder, seats);
+            if(!error)
+                success  = new MessageHandler().create_trip(request.getSession(), name, destination, date.getTime(), founder, seats);
             System.out.println("RIUSCITA");
         } catch (OtpErlangDecodeException | OtpErlangExit | ParseException e) {
             e.printStackTrace();
@@ -54,7 +59,7 @@ public class NewTripServlet extends HttpServlet {
             System.out.println("Exception: " + e);
         }
 
-        if (Objects.equals(success, "ok")) {
+        if ((Objects.equals(success, "ok")) && (!error)){
             response.sendRedirect(request.getContextPath() + "/HomepageServlet");
         } else {
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/pages/new_trip_form.jsp");
