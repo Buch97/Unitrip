@@ -21,14 +21,15 @@
 
 start_main_server() ->
     mnesia_db:start_mnesia(),
+    io:format("[MAIN SERVER] Starting monitor. ~n"),
+    spawn(fun()-> monitor_trip:start_monitor() end),
+    io:format("[MAIN SERVER] Starting listener. ~n"),
+    loop_server:init_listener(),
     io:format("[MAIN SERVER] Starting OTP gen_server. ~n"),
     Result = gen_server:start({local, main_server}, ?MODULE, [], []),
     io:format("[MAIN_SERVER] OTP gen_server server started with result ~p.~n", [Result]),
-    io:format("[MAIN SERVER] Starting listener. ~n"),
-    loop_server:init_listener(),
-    io:format("[MAIN SERVER] Starting monitor. ~n"),
-    spawn(fun()-> monitor_trip:start_monitor() end),
     Result.
+
 
 register_request(Username, Password) ->
     gen_server:call(main_server, {register, Username, Password}).
@@ -148,6 +149,7 @@ update_active_trips([H|T], ServerState) ->
     Seats = lists:nth(6, H),
     Partecipants = lists:nth(7, H),
     NewPid = spawn(fun() -> trip:init_trip(TripName, Organizer, Destination, Date, Seats, Partecipants) end),
+    monitor_trip ! {add_to_monitor, NewPid},
     mnesia_db:update_pid(NewPid, TripName),
     NewServerState = ServerState ++ [NewPid],
     update_active_trips(T, NewServerState).
