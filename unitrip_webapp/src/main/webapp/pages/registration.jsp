@@ -17,11 +17,6 @@
     <div id="formContent">
         <!-- Tabs Titles -->
         <h2 class="active"> Sign Up </h2>
-        <!-- Icon -->
-        <div class="fadeIn first">
-            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon"/>
-        </div>
-
         <!-- Login Form -->
         <form action="<%=request.getContextPath()%>/RegistrationServlet" method="post">
             <div>
