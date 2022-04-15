@@ -34,7 +34,7 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
               %% mnesia_db:update_seats(NewSeats, self()),
               io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
               %% io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
-              From ! {self(), true},
+              From ! {self(), ok},
               listener_trip(Name, Organizer, Destination, Date, NewSeats, NewListPartecipants);
             _ ->
               io:format("[TRIP PROCESS] User ~p not present in the database. ~n", [Username]),

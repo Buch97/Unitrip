@@ -98,14 +98,15 @@ public class Trip {
 
         String founder = record.elementAt(2).toString().replace('"',' ').trim();
         System.out.println("FOUNDER: " + founder);
-        String tripName = record.elementAt(0).toString().replace('"',' ').trim();
+        String tripName = record.elementAt(0).toString().replace('"',' ').trim();;
+        System.out.println("NAME: " + tripName);
         int seats = Integer.parseInt(String.valueOf(record.elementAt(5)));
         System.out.println("SEATS: " + seats);
         OtpErlangList list = (OtpErlangList) record.elementAt(6);
         System.out.println("LIST: " + list);
         for (OtpErlangObject person : list) {
             System.out.println(person.toString());
-            participants.add(person.toString());
+            participants.add(person.toString().replace('"',' ').trim());
         }
         System.out.println("LEN: " + participants.size());
         System.out.println("ARR: " + participants);

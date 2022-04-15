@@ -42,21 +42,20 @@ public class MessageHandler{
 
     public String add_participant(HttpSession s, String user, String trip_name) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangPid target_pid = get_trip_pid(s, trip_name);
-        OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(user)});
-        System.out.println("Tupla che invio " + otpErlangTuple);
-        sendToPid(s, target_pid, new OtpErlangAtom("new_partecipant"), otpErlangTuple);
-        return receiveResponse(s);
+        System.out.println("PID RICEVUTO: " + target_pid);
+        sendToPid(s, target_pid, new OtpErlangAtom("new_partecipant"), new OtpErlangString(user));
+        return receiveResponseAddPartecipant(s);
     }
 
     private OtpErlangPid get_trip_pid(HttpSession s, String trip_name) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(trip_name)});
-        send(s, serverPID, new OtpErlangAtom("get_trip_by_name"), otpErlangTuple);
+        sendGetTripByName(s, serverPID, new OtpErlangAtom("get_trip_by_name"), new OtpErlangString(trip_name));
         return receivePid(s);
     }
 
-    public String remove_participant(HttpSession s, String user, String trip_pid) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpErlangTuple otpErlangTuple = new OtpErlangTuple(new OtpErlangObject[]{new OtpErlangString(user)});
-        //sendToPid(s, trip_pid, new OtpErlangAtom("remove_participant"), otpErlangTuple);
+    public String remove_participant(HttpSession s, String user, String trip_name) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangPid target_pid = get_trip_pid(s, trip_name);
+        System.out.println("PID RICEVUTO: " + target_pid);
+        sendToPid(s, target_pid, new OtpErlangAtom("delete_partecipant"), new OtpErlangString(user));
         return receiveResponse(s);
     }
 
@@ -72,6 +71,14 @@ public class MessageHandler{
         otpMbox.send(serverPID, serverNode, request);
     }
 
+    public void sendGetTripByName(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtomOne, OtpErlangString otpErlangAtomTwo) {
+        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println(otpMbox.self());
+        OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtomOne, otpErlangAtomTwo});
+        System.out.println("REQUEST(sendToGetPid): " + request);
+        otpMbox.send(serverPID, serverNode, request);
+    }
+
     public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangTuple otpErlangTuple){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
         System.out.println("funzione: " + otpErlangAtom + " ,Mbox creata");
@@ -82,12 +89,12 @@ public class MessageHandler{
         System.out.println("Send Mbox fatta");
     }
 
-    public void sendToPid(HttpSession session, OtpErlangPid trip_process, OtpErlangAtom otpErlangAtom, OtpErlangTuple otpErlangTuple){
+    public void sendToPid(HttpSession session, OtpErlangPid trip_process, OtpErlangAtom otpErlangAtom, OtpErlangString otpErlangTuple){
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
         System.out.println("sendToPId: Mbox creata");
-        System.out.println(trip_process);
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangTuple});
-        otpMbox.send("#Pid<0.141.0>", request);
+        System.out.println("REQUEST ADD PARTICPANT: " + request);
+        otpMbox.send(trip_process, request);
         System.out.println("sendToPid: Inviata");
     }
 
@@ -105,17 +112,44 @@ public class MessageHandler{
         return status.toString();
     }
 
+    public String receiveResponseAddPartecipant(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status = new OtpErlangAtom("");
+        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
+        OtpErlangObject message = otpMbox.receive();
+        System.out.println("Message: " + message);
+        if(message instanceof OtpErlangTuple){
+            status = (OtpErlangAtom) ((OtpErlangTuple) message).elementAt(1); //vado a vedere solo l'esito della mia richiesta
+        }
+        System.out.println(status.toString()); //ricevo {atomic,ok} perchè?
+        return status.toString();
+    }
+
+    public String receiveResponseDeletePartecipant(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
+        OtpErlangAtom status = new OtpErlangAtom("");
+        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
+        OtpErlangObject message = otpMbox.receive();
+        System.out.println("Message: " + message);
+        if(message instanceof OtpErlangTuple){
+            status = (OtpErlangAtom) ((OtpErlangTuple) message).elementAt(1); //vado a vedere solo l'esito della mia richiesta
+        }
+        System.out.println(status.toString()); //ricevo {atomic,ok} perchè?
+        return status.toString();
+    }
+
     public OtpErlangPid receivePid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
         System.out.println("MBOX CREATA ASPETTO RISPOSTA COL PID");
         OtpErlangObject message = otpMbox.receive();
         System.out.println("Message: " + message);
-        OtpErlangPid pid = null;
+        OtpErlangList obj = null;
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
-            pid = (OtpErlangPid) (responseTuple).elementAt(1); //vado a vedere solo l'esito della mia richiesta
+            System.out.println("response tuple " + responseTuple);
+            obj = (OtpErlangList) responseTuple.elementAt(1);
         }
-        return pid;
+        return (OtpErlangPid) obj.elementAt(0);
     }
 
     public String receiveResponseTripCreation(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {

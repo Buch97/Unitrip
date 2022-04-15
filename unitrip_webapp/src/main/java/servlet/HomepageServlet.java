@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @WebServlet(name = "HomepageServlet", value = "/HomepageServlet")
 public class HomepageServlet extends HttpServlet {
@@ -37,8 +38,8 @@ public class HomepageServlet extends HttpServlet {
 
         String username = request.getParameter("username").trim();
         String trip_name = request.getParameter("trip_name").trim();
+        String success = "";
         if(request.getParameter("joinButton") != null) {
-            String success = "";
             try {
                 success = new MessageHandler().add_participant(request.getSession(), username, trip_name);
                 System.out.println("Ritorno funzione");
@@ -47,16 +48,21 @@ public class HomepageServlet extends HttpServlet {
             }
         }
         else if(request.getParameter("leaveButton") != null){
-            String success = "";
             try {
                 success = new MessageHandler().remove_participant(request.getSession(), username, trip_name);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
         }
+        if(Objects.equals(success, "ok")) {
+            response.sendRedirect(request.getContextPath() + "/HomepageServlet");
+        }
+        else {
+            System.out.println("Something went wrong");
             String targetJSP = "/pages/homepage.jsp";
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(targetJSP);
             requestDispatcher.forward(request, response);
+        }
 
     }
 }

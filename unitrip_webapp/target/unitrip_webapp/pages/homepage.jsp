@@ -3,7 +3,8 @@
 <%@ page import="java.io.File" %>
 <%@ page import="java.io.FileWriter" %>
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="dto.TripList" %><%--
+<%@ page import="dto.TripList" %>
+<%@ page import="java.nio.file.Files" %><%--
   Created by IntelliJ IDEA.
   User: pucci
   Date: 07/04/2022
@@ -84,11 +85,14 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <% //if(!trip.getParticipants().contains(request.getSession().getAttribute("username"))){%>
+                                <%System.out.println("PART: " + trip.getParticipants());%>
+                                <%System.out.println("Logged: " + request.getSession().getAttribute("username"));%>
+                                <%System.out.println(trip.getParticipants().contains(request.getSession().getAttribute("username").toString()));%>
+                                <% if(!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())){%>
                                 <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
-                                <% // } else {%>
-                                <!-- <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP"> -->
-                                <% //} %>
+                                <%} else {%>
+                                <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <%} %>
                             </form>
                             <%//}else{%>
                             <!--<h3> No seats available!!!</h3>-->
