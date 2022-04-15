@@ -27,7 +27,7 @@ start_main_server() ->
     io:format("[MAIN SERVER] Starting listener. ~n"),
     loop_server:init_listener(),
     io:format("[MAIN SERVER] Starting monitor. ~n"),
-    monitor_trip:start_monitor(),
+    spawn(fun()-> monitor_trip:start_monitor() end),
     Result.
 
 register_request(Username, Password) ->
@@ -92,6 +92,7 @@ handle_call({create_trip, Name, Organizer, Destination, Date, Seats}, _From, Ser
             NewState = ServerState ++ [Pid],
             io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewState]),
             %% aggiunta del processo al monitor
+            monitor_trip ! {add_to_monitor, Pid},
             {reply, {Result, Pid}, NewState};
         _ ->
             exit(Pid, kill),

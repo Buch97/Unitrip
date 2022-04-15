@@ -229,7 +229,6 @@ add_joined(Username) ->
 update_joined_list(NewTripName, Username, OldList) ->
   T = fun() ->
     [Record] = mnesia:read({joined, Username}),
-    io:format("[MNESIA] VALUE OF OLDLIST: ~p.~n", [OldList]),
     NewList = OldList ++ [NewTripName],
     mnesia:write(Record#joined{trip_list = NewList})
       end,
