@@ -13,7 +13,7 @@
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
   get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, update_pid/2, add_joined/1,
-  get_joined_by_username/1, delete_joined/2, get_active_trips/0, delete_trip/1, get_partecipants/1, update_joined_list/3]).
+  get_joined_by_username/1, delete_joined/2, get_active_trips/0, delete_trip/1, get_partecipants/1, update_joined_list/3, delete_join_list/2]).
 
 -record(user, {username, password}).
 -record(trip, {name, pid, organizer, destination, date, seats, partecipants}).
@@ -230,6 +230,13 @@ update_joined_list(NewTripName, Username, OldList) ->
   T = fun() ->
     [Record] = mnesia:read({joined, Username}),
     NewList = OldList ++ [NewTripName],
+    mnesia:write(Record#joined{trip_list = NewList})
+      end,
+  mnesia:transaction(T).
+
+delete_join_list(Username, NewList) ->
+  T = fun() ->
+    [Record] = mnesia:read({joined, Username}),
     mnesia:write(Record#joined{trip_list = NewList})
       end,
   mnesia:transaction(T).
