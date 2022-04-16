@@ -102,7 +102,7 @@
                             </script>
                         </div>
                         <div class="text-center">
-                            <%//if(trip.getParticipants().size() < trip.getSeats()){%>
+                            <%if(trip.getParticipants().size() < trip.getSeats()){%>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
@@ -114,9 +114,9 @@
                                 <input style="font-size:17pt" name="deleteButton" class="btn btn-outline-dark mt-auto" type="submit" value="DELETE TRIP">
                                 <%}%>
                             </form>
-                            <%//}else{%>
-                            <!--<h3> No seats available!!!</h3>-->
-                            <%//}%>
+                            <%}else{%>
+                            <h3> No seats available</h3>
+                            <%}%>
                         </div>
                     </div>
                 </div>
