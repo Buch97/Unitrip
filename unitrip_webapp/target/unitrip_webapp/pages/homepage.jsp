@@ -26,7 +26,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="./resources/css/homepage.css" rel="stylesheet" />
-    <!-- <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/homepage_websocket.js"></script>-->
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/homepage_websocket.js"></script>
 
 </head>
 <body><!--onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');"-->
@@ -80,7 +80,6 @@
                             <%}%>
                             <h3>Remaining time: <h3 id ="time_<%=trip.getTripName()%>"></h3></h3>
                             <script type="text/javascript">
-                                //time_passing(<%//=trip.ExpirationDate(trip.getDate())%>,<%//=trip.getTripName()%>);
                                 setInterval(function() {
 
                                     var now = new Date().getTime();
@@ -107,14 +106,13 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <%System.out.println("PART: " + trip.getParticipants());%>
-                                <%System.out.println("Logged: " + request.getSession().getAttribute("username"));%>
-                                <%System.out.println(trip.getParticipants().contains(request.getSession().getAttribute("username").toString()));%>
-                                <% if(!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())){%>
+                                <% if((!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
                                 <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
-                                <%} else {%>
+                                <%} else if((trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
                                 <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
-                                <%} %>
+                                <%} else if(request.getSession().getAttribute("username").toString().contains("admin")){%>
+                                <input style="font-size:17pt" name="deleteButton" class="btn btn-outline-dark mt-auto" type="submit" value="DELETE TRIP">
+                                <%}%>
                             </form>
                             <%//}else{%>
                             <!--<h3> No seats available!!!</h3>-->

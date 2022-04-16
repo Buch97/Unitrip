@@ -34,24 +34,26 @@ public class NewTripServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //azione post sul form del trip
+        boolean error = false;
         String destination = request.getParameter("destination");
         String name = request.getParameter("trip_name");
         String founder = (String) request.getSession().getAttribute("username");
         int seats = Integer.parseInt(request.getParameter("seats"));
-        boolean error = false;
-        if ((seats <= 0) || (name == null)|| (destination == null))
+        if ((seats <= 0) || (name == null)|| (destination == null)) {
             error = true;
+            request.getSession().setAttribute("status", "You have to fill all mandatory fields or seats are less then 0");
+        }
         String success = "";
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date date = formatter.parse(request.getParameter("date"));
-            if(date.getTime() <=  System.currentTimeMillis())
+            if(date.getTime() <=  System.currentTimeMillis() + 7*24*60*60*1000) {
                 error = true;
-            System.out.println("Data in millis: " + date.getTime());
+                request.getSession().setAttribute("status", "Date selected is too close");
+            }
             if(!error)
                 success  = new MessageHandler().create_trip(request.getSession(), name, destination, date.getTime(), founder, seats);
-            System.out.println("RIUSCITA");
         } catch (OtpErlangDecodeException | OtpErlangExit | ParseException e) {
             e.printStackTrace();
         }

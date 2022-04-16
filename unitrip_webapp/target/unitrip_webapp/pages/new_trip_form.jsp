@@ -12,6 +12,9 @@
     <title>New trip</title>
 </head>
 <body>
+<%if(request.getSession().getAttribute("status") != null){%>
+alert(<%=request.getSession().getAttribute("status")%>);
+<%}%>
 <div>
     <h1>Compile this form to create a new Trip</h1>
     <form action="<%=request.getContextPath()%>/NewTripServlet" method="post">

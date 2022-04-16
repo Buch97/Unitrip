@@ -64,6 +64,18 @@ public class MessageHandler{
         return receiveList(s);
     }
 
+    public String delete_trip(HttpSession s, String trip) throws OtpErlangDecodeException, OtpErlangExit {
+        sendDeleteTrip(s, serverPID, new OtpErlangAtom("login"), new OtpErlangString(trip));
+        return receiveResponse(s);
+    }
+
+    private void sendDeleteTrip(HttpSession session, String serverPID, OtpErlangAtom login, OtpErlangString otpErlangString) {
+        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println(otpMbox.self());
+        OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangString});
+        otpMbox.send(serverPID, serverNode, request);
+    }
+
     public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom) {
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
         System.out.println(otpMbox.self());

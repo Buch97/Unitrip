@@ -54,6 +54,13 @@ public class HomepageServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
+        else if(request.getParameter("deleteButton") != null){
+            try {
+                success = new MessageHandler().delete_trip(request.getSession(), trip_name);
+            } catch (OtpErlangDecodeException | OtpErlangExit e) {
+                e.printStackTrace();
+            }
+        }
         if(Objects.equals(success, "ok")) {
             response.sendRedirect(request.getContextPath() + "/HomepageServlet");
         }
