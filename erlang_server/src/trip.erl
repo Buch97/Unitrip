@@ -21,7 +21,7 @@ init_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
 listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
   receive
     {From, new_partecipant, Username} ->
-      case Seats /= 0 of
+      case Seats > 0 of
         true ->
           case lists:member(Username, Partecipants) of
             false ->
@@ -60,6 +60,7 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
       io:format("[TRIP PROCESS] Available seats: ~p. ~n", [Seats]),
       listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants);
     {From, delete_partecipant, Username} ->
+      NewSeats = Seats + 1,
       NewListPartecipants = lists:delete(Username, Partecipants),
       io:format("[TRIP PROCESS] New list of partecipants: ~p. ~n", [NewListPartecipants]),
       Result= mnesia_db:update_partecipants(NewListPartecipants, Name),
@@ -68,7 +69,7 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
       %% mnesia_db:delete_join_list(Username, NewJoined),
       %% io:format("[TRIP PROCESS] Joined trips of the user ~p: ~p. ~n", [Username, NewJoined]),
       From ! {self(), Result},
-      listener_trip(Name, Organizer, Destination, Date, Seats, NewListPartecipants);
+      listener_trip(Name, Organizer, Destination, Date, NewSeats, NewListPartecipants);
     {evaluate_exp_date} ->
       case erlang:system_time(1000) > Date of
         true ->
