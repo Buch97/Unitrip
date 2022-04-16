@@ -27,7 +27,7 @@ start_link() ->
 %%                  modules => modules()}   % optional
 
 init(_Args) ->
-  io:format("[SUPERVISOR] Init function started ~n"),
+  io:format("[SUPERVISOR] Init function started. ~n"),
   SupFlags = #{strategy => one_for_one,
                  intensity => 1,
                  period => 5},

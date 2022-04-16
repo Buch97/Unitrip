@@ -23,21 +23,27 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
     {From, new_partecipant, Username} ->
       case Seats /= 0 of
         true ->
-          case mnesia_db:check_user_present(Username) of
-            {atomic, true} ->
-              NewSeats = Seats - 1,
-              NewListPartecipants = Partecipants ++ [Username],
-              mnesia_db:update_partecipants(NewListPartecipants, Name),
-              Result = mnesia_db:get_joined_by_username(Username),
-              OldList = lists:nth(1, element(2, Result)),
-              mnesia_db:update_joined_list(Name, Username, OldList),
-              %% mnesia_db:update_seats(NewSeats, self()),
-              io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
-              %% io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
-              From ! {self(), ok},
-              listener_trip(Name, Organizer, Destination, Date, NewSeats, NewListPartecipants);
-            _ ->
-              io:format("[TRIP PROCESS] User ~p not present in the database. ~n", [Username]),
+          case lists:member(Username, Partecipants) of
+            false ->
+              case mnesia_db:check_user_present(Username) of
+                {atomic, true} ->
+                  NewSeats = Seats - 1,
+                  NewListPartecipants = Partecipants ++ [Username],
+                  mnesia_db:update_partecipants(NewListPartecipants, Name),
+                  %% Result = mnesia_db:get_joined_by_username(Username),
+                  %% OldList = lists:nth(1, element(2, Result)),
+                  %% mnesia_db:update_joined_list(Name, Username, OldList),
+                  %% mnesia_db:update_seats(NewSeats, self()),
+                  io:format("[TRIP PROCESS] User ~p added. ~n", [Username]),
+                  %% io:format("[TRIP PROCESS] Available seats: ~p. ~n", [NewSeats]),
+                  From ! {self(), ok},
+                  listener_trip(Name, Organizer, Destination, Date, NewSeats, NewListPartecipants);
+                _ ->
+                  io:format("[TRIP PROCESS] User ~p not present in the database. ~n", [Username]),
+                  listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants)
+              end;
+            true ->
+              io:format("[TRIP PROCESS] User ~p has already join the trip. ~n", [Username]),
               listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants)
           end;
         false ->
@@ -57,11 +63,10 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
       NewListPartecipants = lists:delete(Username, Partecipants),
       io:format("[TRIP PROCESS] New list of partecipants: ~p. ~n", [NewListPartecipants]),
       Result= mnesia_db:update_partecipants(NewListPartecipants, Name),
-      Joined = element(2, mnesia_db:get_joined_by_username(Username)),
-      FlattenJoined = lists:flatten(Joined),
-      NewJoined = lists:delete(Name, FlattenJoined),
-      mnesia_db:delete_join_list(Username, NewJoined),
-      io:format("[TRIP PROCESS] Joined trips of the user ~p: ~p. ~n", [Username, NewJoined]),
+      %% Joined = element(2, mnesia_db:get_joined_by_username(Username)),
+      %% NewJoined = lists:delete(Name, Joined),
+      %% mnesia_db:delete_join_list(Username, NewJoined),
+      %% io:format("[TRIP PROCESS] Joined trips of the user ~p: ~p. ~n", [Username, NewJoined]),
       From ! {self(), Result},
       listener_trip(Name, Organizer, Destination, Date, Seats, NewListPartecipants);
     {evaluate_exp_date} ->

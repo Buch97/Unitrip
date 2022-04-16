@@ -72,7 +72,6 @@ init([]) ->
 
 handle_call({register, Username, Password}, _From, _ServerState) ->
     Result = mnesia_db:add_user(Username, Password),
-    mnesia_db:add_joined(Username),
     io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
     {reply, Result, _ServerState};
 handle_call({login, Username, Password}, _From, _ServerState) ->

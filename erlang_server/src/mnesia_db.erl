@@ -13,7 +13,7 @@
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
   get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, update_pid/2, add_joined/1,
-  get_joined_by_username/1, delete_joined/2, get_active_trips/0, delete_trip/1, get_partecipants/1, update_joined_list/3, delete_join_list/2]).
+  get_joined_by_username/1, delete_joined/2, get_active_trips/0, delete_trip/1, get_partecipants/1, update_joined_list/3, delete_join_list/2, check_if_already_joined/2]).
 
 -record(user, {username, password}).
 -record(trip, {name, pid, organizer, destination, date, seats, partecipants}).
@@ -34,10 +34,10 @@ start_mnesia() ->
       io:format("[MNESIA] Table user created. ~n"),
       mnesia:create_table(trip,
         [{attributes, record_info(fields, trip)}, {disc_copies, [node()]}]),
-      io:format("[MNESIA] Table joined created. ~n"),
-      mnesia:create_table(joined,
-        [{attributes, record_info(fields, joined)}, {disc_copies, [node()]}]),
       io:format("[MNESIA] Table trip created. ~n")
+      %mnesia:create_table(joined,
+      %  [{attributes, record_info(fields, joined)}, {disc_copies, [node()]}]),
+      %io:format("[MNESIA] Table joined created. ~n")
   end.
 
 
@@ -55,7 +55,8 @@ add_user(Username, Password) ->
           username = Username,
           password = Password
         });
-      _ ->
+        % mnesia_db:add_joined(Username);
+        _ ->
         false
     end
   end,
@@ -212,19 +213,29 @@ reset_trips() ->
 
 add_joined(Username) ->
   T = fun() ->
-    case mnesia_db:check_user_present(Username) of
-      {atomic, true} ->
-        io:format("[MNESIA] Adding empty list of joined trip by the user ~p. ~n", [Username]),
-        mnesia:write(#joined
-        {
-          username = Username,
-          trip_list = []
-        });
-      _ ->
+    io:format("[MNESIA] Adding empty list of joined trip by the user ~p. ~n", [Username]),
+    mnesia:write(#joined
+    {
+      username = Username,
+      trip_list = []
+    })
+  end,
+  mnesia:transaction(T).
+
+check_if_already_joined(Username, TripName) ->
+  T = fun() ->
+    io:format("[MNESIA] Checking if user ~p already joined the trip ~p. ~n", [Username, TripName]),
+    Joined = element(2, get_joined_by_username(Username)),
+    case lists:member(TripName, Joined) of
+      true ->
+        io:format("[MNESIA] User ~p already joined the trip ~p. ~n", [Username, TripName]),
+        true;
+      false ->
+        io:format("[MNESIA] User ~p not joined yet the trip ~p. ~n", [Username, TripName]),
         false
     end
       end,
-  mnesia:transaction(T).
+  mnesia:transaction(T). %% {atomic, false}
 
 update_joined_list(NewTripName, Username, OldList) ->
   T = fun() ->
@@ -247,7 +258,7 @@ get_joined_by_username(Username) ->
     io:format("[MNESIA] Getting joined trips of the user ~p. ~n", [Username]),
     Joined = #joined{username='$1', trip_list ='$2'},
     Guard = {'==', '$1', Username},
-    mnesia:select(joined, [{Joined, [Guard], ['$2']}])
+    mnesia:select(joined, [{Joined, [Guard], '$2'}])
       end,
   mnesia:transaction(T).
 
