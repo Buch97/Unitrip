@@ -118,14 +118,9 @@ handle_call({reset_trips}, _From, _ServerState) ->
     NewState = [],
     io:format("[MAIN SERVER] Result of reset_trips: ~p. ~n", [Result]),
     {reply, Result, NewState};
-handle_call({terminate_trip, Pid}, _From, ServerState) ->
-    io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
-    NewServerState = lists:delete(Pid, ServerState),
-    io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]),
-    {noreply, NewServerState};
 handle_call({delete_trip, Pid, TripName}, _From, ServerState) ->
     io:format("[MAIN SERVER] Terminating trip with pid: ~p. ~n", [Pid]),
-    exit(Pid, killed),
+    exit(Pid, kill),
     io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
     Result = mnesia_db:delete_trip(TripName),
     NewServerState = lists:delete(Pid, ServerState),
