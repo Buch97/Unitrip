@@ -26,9 +26,9 @@ monitor_loop(ServerState) ->
       io:format("[MONITOR] NewServerState: ~p, Reference: ~p.~n", [NewServerState, Res]),
       monitor_loop(NewServerState);
     {'DOWN', Ref, process, Pid, Reason} ->
-      case Reason =:= normal of
+      case Reason =:= killed of
         true ->
-          io:format("[MONITOR] The process ~p terminated with reason and Ref ~p.~n", [Pid, Ref]),
+          io:format("[MONITOR] The process ~p terminated with reason ~p and Ref ~p.~n", [Pid, Reason, Ref]),
           io:format("[MONITOR] Removing the process from the list.~n"),
           NewServerState = lists:delete(Pid, ServerState),
           io:format("[MONITOR] New ServerState: ~p.~n", [NewServerState]),
@@ -53,7 +53,9 @@ monitor_loop(ServerState) ->
           self() ! {add_to_monitor, NewPid},
           monitor_loop(NewServerState)
       end;
-    _ ->  io:format("[MONITOR] Message not recognized. ~n")
+    _ ->
+      io:format("[MONITOR] Message not recognized. ~n"),
+      monitor_loop(ServerState)
   end.
 
 

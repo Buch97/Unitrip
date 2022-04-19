@@ -13,7 +13,7 @@
 -import(trip, [listener_trip/6]).
 -export([start_main_server/0, register_request/2, init/1, handle_call/3, login_request/2, delete_request/1,
     create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2,
-    update_server_state/1, spawn_trips/1, update_active_trips/2]).
+    update_server_state/1, spawn_trips/1, update_active_trips/2, delete_trip/1]).
 
 %%%-------------------------------------------------------------------
 %%% API FUNCTIONS
@@ -50,7 +50,11 @@ trip_by_name(Name) ->
     gen_server:call(main_server, {get_trip_by_name, Name}).
 
 update_server_state(From) ->
-    gen_server:call(main_server, {delete_trips, From}).
+    gen_server:call(main_server, {terminate_trip, From}).
+
+delete_trip(TripName) ->
+    Pid = lists:nth(1, element(2, mnesia_db:get_trip_by_name(TripName))),
+    gen_server:call(main_server, {delete_trip, Pid, TripName}).
 
 reset_trips() ->
     gen_server:call(main_server, {reset_trips}).
@@ -114,10 +118,19 @@ handle_call({reset_trips}, _From, _ServerState) ->
     NewState = [],
     io:format("[MAIN SERVER] Result of reset_trips: ~p. ~n", [Result]),
     {reply, Result, NewState};
-handle_call({delete_trip, Pid}, _From, ServerState) ->
+handle_call({terminate_trip, Pid}, _From, ServerState) ->
     io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
     NewServerState = lists:delete(Pid, ServerState),
-    io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]).
+    io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]),
+    {noreply, NewServerState};
+handle_call({delete_trip, Pid, TripName}, _From, ServerState) ->
+    io:format("[MAIN SERVER] Terminating trip with pid: ~p. ~n", [Pid]),
+    exit(Pid, killed),
+    io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
+    Result = mnesia_db:delete_trip(TripName),
+    NewServerState = lists:delete(Pid, ServerState),
+    io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]),
+    {reply, Result, NewServerState}.
 
 handle_cast(reset, ServerState) ->
     {noreply, ServerState}.

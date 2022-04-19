@@ -74,7 +74,7 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants) ->
       case erlang:system_time(1000) > Date of
         true ->
           mnesia_db:store_trip(Name, Seats, Partecipants),
-          loop_server ! {self(), delete_trip},
+          loop_server ! {self(), terminate_trip},
           io:format("[TRIP PROCESS] Trip expired, information stored in the database. ~n"),
           exit(self(), kill);
         false ->
