@@ -26,7 +26,7 @@ monitor_loop(ServerState) ->
       io:format("[MONITOR] NewServerState: ~p, Reference: ~p.~n", [NewServerState, Res]),
       monitor_loop(NewServerState);
     {'DOWN', Ref, process, Pid, Reason} ->
-      case Reason =:= killed of
+      case Reason =:= killed orelse Reason =:= normal of
         true ->
           io:format("[MONITOR] The process ~p terminated with reason ~p and Ref ~p.~n", [Pid, Reason, Ref]),
           io:format("[MONITOR] Removing the process from the list.~n"),
