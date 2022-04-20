@@ -87,23 +87,30 @@ handle_call({delete, Username}, _From, _ServerState) ->
     io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
     {reply, Result, _ServerState};
 handle_call({create_trip, Name, Organizer, Destination, Date, Seats}, _From, ServerState) ->
-    Pid = spawn(fun() -> trip:init_trip(Name, Organizer, Destination, Date, Seats, []) end),
-    io:format("[MAIN_SERVER] New erlang node spawned with pid ~p. ~n", [Pid]),
-    Result = mnesia_db:add_trip(Pid, Organizer, Name, Destination, Date, Seats),
-    io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
-    case Result of
-        {atomic, ok} ->
-            NewState = ServerState ++ [Pid],
-            io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewState]),
-            %% aggiunta del processo al monitor
-            monitor_trip ! {add_to_monitor, Pid},
-            {reply, {Result, Pid}, NewState};
-        _ ->
-            exit(Pid, kill),
-            io:format("[MAIN SERVER] Something went wrong. ~n"),
-            io:format("[MAIN SERVER] Process ~p terminated. ~n", [Pid]),
-            {reply, Result, ServerState}
+    Res = mnesia_db:check_if_tripName_present(Name),
+    case Res of
+        {atomic, false} ->
+            Pid = spawn(fun() -> trip:init_trip(Name, Organizer, Destination, Date, Seats, [], []) end),
+            io:format("[MAIN_SERVER] New erlang node spawned with pid ~p. ~n", [Pid]),
+            Result = mnesia_db:add_trip(Pid, Organizer, Name, Destination, Date, Seats),
+            io:format("[MAIN_SERVER] Result of the transaction ~p. ~n", [Result]),
+            case Result of
+                {atomic, ok} ->
+                    NewState = ServerState ++ [Pid],
+                    io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewState]),
+                    %% aggiunta del processo al monitor
+                    monitor_trip ! {add_to_monitor, Pid},
+                    {reply, {Result, Pid}, NewState};
+                _ ->
+                    exit(Pid, kill),
+                    io:format("[MAIN SERVER] Something went wrong. ~n"),
+                    io:format("[MAIN SERVER] Process ~p terminated. ~n", [Pid]),
+                    {reply, Result, ServerState}
 
+            end;
+        _ ->
+            io:format("[MAIN_SERVER] Transaction went wrong. ~n"),
+            {reply, Res, ServerState}
     end;
 handle_call({get_trips}, _From, ServerState) ->
     Result = lists_trips(ServerState, []),
@@ -122,10 +129,10 @@ handle_call({delete_trip, Pid, TripName}, _From, ServerState) ->
     io:format("[MAIN SERVER] Terminating trip with pid: ~p. ~n", [Pid]),
     exit(Pid, kill),
     io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
-    Result = mnesia_db:delete_trip(TripName),
+    %% Result = mnesia_db:delete_trip(TripName),
     NewServerState = lists:delete(Pid, ServerState),
     io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]),
-    {reply, Result, NewServerState}.
+    {noreply, NewServerState}.
 
 handle_cast(reset, ServerState) ->
     {noreply, ServerState}.
@@ -155,7 +162,8 @@ update_active_trips([H|T], ServerState) ->
     Date = lists:nth(5, H),
     Seats = lists:nth(6, H),
     Partecipants = lists:nth(7, H),
-    NewPid = spawn(fun() -> trip:init_trip(TripName, Organizer, Destination, Date, Seats, Partecipants) end),
+    User_Add_To_Favorites = lists:nth(8, H),
+    NewPid = spawn(fun() -> trip:init_trip(TripName, Organizer, Destination, Date, Seats, Partecipants, User_Add_To_Favorites) end),
     monitor_trip ! {add_to_monitor, NewPid},
     mnesia_db:update_pid(NewPid, TripName),
     NewServerState = ServerState ++ [NewPid],
