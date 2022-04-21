@@ -42,12 +42,19 @@ public class HomepageServlet extends HttpServlet {
         if(request.getParameter("joinButton") != null) {
             try {
                 success = new MessageHandler().add_participant(request.getSession(), username, trip_name);
-                System.out.println("Ritorno funzione");
+                System.out.println("Ritorno funzione add_part");
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
         }
         else if(request.getParameter("leaveButton") != null){
+            try {
+                success = new MessageHandler().remove_participant(request.getSession(), username, trip_name);
+            } catch (OtpErlangDecodeException | OtpErlangExit e) {
+                e.printStackTrace();
+            }
+        }
+        else if(request.getParameter("favButton") != null){
             try {
                 success = new MessageHandler().remove_participant(request.getSession(), username, trip_name);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {

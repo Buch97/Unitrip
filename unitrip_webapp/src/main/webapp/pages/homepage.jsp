@@ -62,6 +62,11 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h1 class="fw-bolder"><%= trip.getDestination()%></h1>
+                            <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
+                                <input  type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
+                                <input  type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
+                                <input style="font-size:12pt" name="favButton" type="image" src="" value="SAVE">
+                            </form>
                             <h3><%=trip.getDate()%></h3>
                             <h3>Founder: <%=trip.getFounder()%></h3>
                             <!--<h3>From: Bologna</h3>!-->
@@ -107,13 +112,17 @@
                         </div>
                         <div class="text-center">
                             <%if(trip.getParticipants().size() < trip.getSeats()){%>
+                            <script>var arg = '<%=trip.getTripName()%>';</script>
+                            <script>console.log("TRIP NAME: " + arg);</script>
+                            <%String nameTrip = trip.getTripName();%>
+                            <h3 id="tripNome" type="hidden" style="display:none"><%=trip.getTripName()%></h3>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
-                                <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
+                                <input id="TripName" type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input id="userLogged" type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <% if((!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input id="join" onclick="sendAdd('<%=trip.getTripName()%>');" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
+                                <input id="join" onclick="sendAdd(arg)" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
                                 <%} else if((trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input onclick="sendSub(<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <input onclick="sendSub(arg)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                                 <%} else if(request.getSession().getAttribute("username").toString().contains("admin")){%>
                                 <input style="font-size:17pt" name="deleteButton" class="btn btn-outline-dark mt-auto" type="submit" value="DELETE TRIP">
                                 <%}%>
@@ -123,7 +132,7 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <input onclick="sendSub(<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <input onclick="sendSub(arg)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                             </form>
                             <%} else{%>
                             <h3> No seats available</h3>

@@ -8,29 +8,29 @@ function connect(ctx, username) {
 
     ws.onmessage = function(event) {
         console.log("RICEVO MESSAGE BROADCAST")
-        const child = document.createElement('span');
+        var child = document.createElement('span');
         var message = JSON.parse(event.data);
-        console.log(message.tripName);
-        console.log(message.user);
-        var count = document.getElementById("numSeats_" + message.tripName);
-        console.log(count.innerHTML)
+        console.log("TRIP: " + message.name);
+        console.log("USER: " + message.user);
+        console.log("ACTION: " + message.action)
+        var count = document.getElementById("numSeats_" + message.name);
         var list = document.getElementById("myDropdown_" + message.user);
         if(message.action === 'add') {
-            count.value = parseInt(count.text()) + 1;
+            count.innerHTML = (parseInt(count.innerHTML) + 1).toString();
             child.innerHTML = message.user
             list.append(child);
         }
         if(message.action === 'sub')
-            count.value -= 1;
+            count.innerHTML = (parseInt(count.innerHTML) - 1).toString();
 
     };
 }
 
 function sendAdd(trip){
     console.log("DENTRO SEND ADD")
-    console.log("TRIP: "  + trip)
+    console.log("TRIP NAME: " + trip)
     var json = JSON.stringify({
-        "tripName":trip,
+        "name":trip,
         "action":"add"
     });
 
@@ -39,7 +39,7 @@ function sendAdd(trip){
 
 function sendSub(trip){
     var json = JSON.stringify({
-        "tripName":trip,
+        "name":trip,
         "action":"sub"
     });
 
