@@ -8,20 +8,24 @@ function connect(ctx, username) {
 
     ws.onmessage = function(event) {
         console.log("RICEVO MESSAGE BROADCAST")
-        var child = document.createElement('span');
+        var child = document.createElement("span");
         var message = JSON.parse(event.data);
         console.log("TRIP: " + message.name);
         console.log("USER: " + message.user);
         console.log("ACTION: " + message.action)
         var count = document.getElementById("numSeats_" + message.name);
-        var list = document.getElementById("myDropdown_" + message.user);
+        var list = document.getElementById("myDropdown_" + message.name);
+        var child_span = document.getElementById("child_" + message.user);
         if(message.action === 'add') {
             count.innerHTML = (parseInt(count.innerHTML) + 1).toString();
-            child.innerHTML = message.user
-            list.append(child);
+            child.innerHTML = message.user.toString()
+            child.setAttribute('id','child_' + message.user)
+            list.appendChild(child);
         }
-        if(message.action === 'sub')
+        if(message.action === 'sub') {
             count.innerHTML = (parseInt(count.innerHTML) - 1).toString();
+            list.removeChild(child_span)
+        }
 
     };
 }

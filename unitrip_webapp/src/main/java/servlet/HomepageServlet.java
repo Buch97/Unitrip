@@ -42,7 +42,7 @@ public class HomepageServlet extends HttpServlet {
         if(request.getParameter("joinButton") != null) {
             try {
                 success = new MessageHandler().add_participant(request.getSession(), username, trip_name);
-                System.out.println("Ritorno funzione add_part");
+                //System.out.println("Ritorno funzione add_part");
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
