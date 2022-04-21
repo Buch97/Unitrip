@@ -132,7 +132,8 @@ public class MessageHandler{
         OtpErlangObject message = otpMbox.receive();
         System.out.println("Message: " + message);
         if(message instanceof OtpErlangTuple){
-            status = (OtpErlangAtom) ((OtpErlangTuple) message).elementAt(1); //vado a vedere solo l'esito della mia richiesta
+            OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
+            status = (OtpErlangAtom) (responseTuple).elementAt(1);
         }
         System.out.println(status.toString()); //ricevo {atomic,ok} perchè?
         return status.toString();

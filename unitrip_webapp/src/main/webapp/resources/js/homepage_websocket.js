@@ -7,14 +7,43 @@ function connect(ctx, username) {
     ws = new WebSocket(url);
 
     ws.onmessage = function(event) {
-        //Logic to remove message
-        console.log("New trip list to load")
-        var tripListObject = JSON.parse(event.data);
-        console.log(tripListObject);
-        console.log(tripListObject.tripList);
-        console.log(tripListObject.active)
-        updateTripList(ctx, tripListObject.tripList, tripListObject.active);
+        console.log("RICEVO MESSAGE BROADCAST")
+        const child = document.createElement('span');
+        var message = JSON.parse(event.data);
+        console.log(message.tripName);
+        console.log(message.user);
+        var count = document.getElementById("numSeats_" + message.tripName);
+        console.log(count.innerHTML)
+        var list = document.getElementById("myDropdown_" + message.user);
+        if(message.action === 'add') {
+            count.value = parseInt(count.text()) + 1;
+            child.innerHTML = message.user
+            list.append(child);
+        }
+        if(message.action === 'sub')
+            count.value -= 1;
+
     };
+}
+
+function sendAdd(trip){
+    console.log("DENTRO SEND ADD")
+    console.log("TRIP: "  + trip)
+    var json = JSON.stringify({
+        "tripName":trip,
+        "action":"add"
+    });
+
+    ws.send(json);
+}
+
+function sendSub(trip){
+    var json = JSON.stringify({
+        "tripName":trip,
+        "action":"sub"
+    });
+
+    ws.send(json);
 }
 
 // Close the dropdown menu if the user clicks outside of it

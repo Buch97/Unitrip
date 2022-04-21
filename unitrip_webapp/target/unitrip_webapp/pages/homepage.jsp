@@ -21,7 +21,7 @@
     <meta name="author" content="" />
     <title>Homepage</title>
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <!--<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />-->
     <!-- Bootstrap icons-->
 
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -29,7 +29,7 @@
     <script type="text/javascript" src="./resources/js/homepage_websocket.js"></script>
 
 </head>
-<body><!--onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');"-->
+<body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');">
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
@@ -68,7 +68,7 @@
                             <% if(trip.getParticipants()==null){%>
                             <h3>Booked Seats: 0/<%=trip.getSeats()%></h3>
                             <%} else{%>
-                            <h3>Booked Seats: <%=trip.getParticipants().size()%>/<%=trip.getSeats()%></h3>
+                            <h3>Booked Seats: <span id="numSeats_<%=trip.getTripName()%>"><%=trip.getParticipants().size()%></span>/<span><%=trip.getSeats()%></span></h3>
                             <div class="dropdown">
                                 <button class="dropbtn" onclick='document.getElementById("myDropdown_<%=trip.getTripName()%>").classList.toggle("show");'>Participants</button>
                                 <div class="dropdown-content" id="myDropdown_<%=trip.getTripName()%>">
@@ -84,7 +84,7 @@
                             <%}%>
                             <h3>Remaining time: <h3 id ="time_<%=trip.getTripName()%>"></h3></h3>
                             <script type="text/javascript">
-                                setInterval(function() {
+                                var x = setInterval(function() {
 
                                     var now = new Date().getTime();
                                     var timeleft = <%=trip.ExpirationDate(trip.getDate())%> - now;
@@ -108,12 +108,13 @@
                         <div class="text-center">
                             <%if(trip.getParticipants().size() < trip.getSeats()){%>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
+                                <% System.out.println(trip.getTripName());%>
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
-                                <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
+                                <input id="userLogged" type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <% if((!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
+                                <input id="join" onclick="sendAdd(<%=trip.getTripName()%>);" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
                                 <%} else if((trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <input onclick="sendSub(<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                                 <%} else if(request.getSession().getAttribute("username").toString().contains("admin")){%>
                                 <input style="font-size:17pt" name="deleteButton" class="btn btn-outline-dark mt-auto" type="submit" value="DELETE TRIP">
                                 <%}%>
@@ -123,7 +124,7 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <input style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <input onclick="sendSub(<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                             </form>
                             <%} else{%>
                             <h3> No seats available</h3>
