@@ -91,28 +91,28 @@ public class Trip {
         System.out.println("RECORD --> " + record);
         ArrayList<String> participants = new ArrayList<>();
         String destination = record.elementAt(3).toString().replace('"',' ').trim();
-        System.out.println("DEST: " + destination);
+        //System.out.println("DEST: " + destination);
         long dateErlang = Long.parseLong(String.valueOf(record.elementAt(4)));
-        System.out.println("DAta in milli: " + dateErlang);
+        //System.out.println("DAta in milli: " + dateErlang);
         LocalDate date = Instant.ofEpochMilli(dateErlang).atZone(ZoneId.systemDefault()).toLocalDate();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         //LocalDate date = LocalDate.parse(dateErlang, format);
-        System.out.println("DATE: " + date);
+        //System.out.println("DATE: " + date);
 
         String founder = record.elementAt(2).toString().replace('"',' ').trim();
-        System.out.println("FOUNDER: " + founder);
+        //System.out.println("FOUNDER: " + founder);
         String tripName = record.elementAt(0).toString().replace('"',' ').trim();;
-        System.out.println("NAME: " + tripName);
+        //System.out.println("NAME: " + tripName);
         int seats = Integer.parseInt(String.valueOf(record.elementAt(5)));
-        System.out.println("SEATS: " + seats);
+        //System.out.println("SEATS: " + seats);
         OtpErlangList list = (OtpErlangList) record.elementAt(6);
-        System.out.println("LIST: " + list);
+        //System.out.println("LIST: " + list);
         for (OtpErlangObject person : list) {
-            System.out.println(person.toString());
+            //System.out.println(person.toString());
             participants.add(person.toString().replace('"',' ').trim());
         }
-        System.out.println("LEN: " + participants.size());
-        System.out.println("ARR: " + participants);
+        //System.out.println("LEN: " + participants.size());
+        //System.out.println("ARR: " + participants);
 
         return  new Trip(tripName, destination, date, founder, seats, participants);
     }

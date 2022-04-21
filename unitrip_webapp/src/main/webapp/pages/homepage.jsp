@@ -30,7 +30,6 @@
 
 </head>
 <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');">
-
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
         <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt">Logout</a></div>
@@ -62,9 +61,13 @@
                     <div class="card-body p-4">
                         <div class="text-center">
                             <h1 class="fw-bolder"><%= trip.getDestination()%></h1>
+                            <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
+                                <input  type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
+                                <input  type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
+                                <input style="font-size:12pt" name="favButton" type="submit" src="" value="SAVE">
+                            </form>
                             <h3><%=trip.getDate()%></h3>
                             <h3>Founder: <%=trip.getFounder()%></h3>
-                            <!--<h3>From: Bologna</h3>!-->
                             <% if(trip.getParticipants()==null){%>
                             <h3>Booked Seats: 0/<%=trip.getSeats()%></h3>
                             <%} else{%>
@@ -74,7 +77,7 @@
                                 <div class="dropdown-content" id="myDropdown_<%=trip.getTripName()%>">
                                     <%if(trip.getParticipants().size()>0){%>
                                     <%for(String user : trip.getParticipants()){%>
-                                        <span><%=user%></span>
+                                        <span id="child_<%=user%>"><%=user%></span>
                                     <%}%>
                                     <%} else{%>
                                         <span>No participants at the moment</span>
@@ -107,13 +110,16 @@
                         </div>
                         <div class="text-center">
                             <%if(trip.getParticipants().size() < trip.getSeats()){%>
+                            <script>var arg_<%=trip.getTripName()%> = '<%=trip.getTripName()%>';</script>
+                            <%String nameTrip = trip.getTripName();%>
+                            <h3 id="tripNome" type="hidden" style="display:none"><%=trip.getTripName()%></h3>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
-                                <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
+                                <input id="TripName" type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input id="userLogged" type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <% if((!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input id="join" onclick="sendAdd('<%=trip.getTripName()%>');" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
+                                <input id="join" onclick="sendAdd(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
                                 <%} else if((trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input onclick="sendSub(<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <input onclick="sendSub(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                                 <%} else if(request.getSession().getAttribute("username").toString().contains("admin")){%>
                                 <input style="font-size:17pt" name="deleteButton" class="btn btn-outline-dark mt-auto" type="submit" value="DELETE TRIP">
                                 <%}%>
@@ -123,7 +129,7 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <input onclick="sendSub(<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
+                                <input onclick="sendSub(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                             </form>
                             <%} else{%>
                             <h3> No seats available</h3>

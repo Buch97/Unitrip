@@ -23,7 +23,7 @@ public class HomepageEndpoint {
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) {
         // Metodo eseguito all'apertura della connessione
-        System.out.println("[MAIN MENU ENDPOINT] OnOpen");
+        System.out.println("[MAIN MENU ENDPOINT] OnOpen " + username + " is entering");
         this.session = session;
         homeEndpoints.add(this);
         users.put(session.getId(), username);
@@ -37,7 +37,8 @@ public class HomepageEndpoint {
         // inviato come risposta al client. Ad esempio:
         System.out.println("[MAIN MENU ENDPOINT] OnMessage");
         System.out.println("[MAIN MENU ENDPOINT] Trip list is going to be broadcast");
-        System.out.println("MESSAGE RECEIVED BY WS: " + message.getName());
+        System.out.println("[MAIN MENU ENDPOINT] Name of the trip: " + message.getName());
+        System.out.println("[MAIN MENU ENDPOINT] Action : " + message.getAction());
         message.setUser(username);
         broadcast(message);
     }
