@@ -129,10 +129,10 @@ handle_call({delete_trip, Pid, TripName}, _From, ServerState) ->
     io:format("[MAIN SERVER] Terminating trip with pid: ~p. ~n", [Pid]),
     exit(Pid, kill),
     io:format("[MAIN SERVER] Deleting from server state process with pid: ~p. ~n", [Pid]),
-    %% Result = mnesia_db:delete_trip(TripName),
+    Result = mnesia_db:delete_trip(TripName),
     NewServerState = lists:delete(Pid, ServerState),
     io:format("[MAIN SERVER] New Server State: ~p. ~n", [NewServerState]),
-    {noreply, NewServerState}.
+    {reply, Result, NewServerState}.
 
 handle_cast(reset, ServerState) ->
     {noreply, ServerState}.
@@ -142,10 +142,14 @@ handle_cast(reset, ServerState) ->
 %%%-------------------------------------------------------------------
 
 lists_trips([], Result) ->
-    Result;
+    io:format("[MAIN SERVER] NEWRESULT: ~p. ~n", [Result]),
+    FinalResult = lists:reverse(lists:keysort(3, Result)),
+    FinalResult;
 lists_trips([H|T], Result) ->
     Trip = mnesia_db:get_trip(H),
-    NewResult = Result ++ [Trip],
+    Length = length(lists:last(lists:nth(1, element(2, Trip)))),
+    NewTuple = erlang:insert_element(3, Trip, Length),
+    NewResult = Result ++ [NewTuple],
     lists_trips(T, NewResult).
 
 spawn_trips(ServerState) ->

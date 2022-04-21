@@ -13,9 +13,9 @@
 
 -export([start_mnesia/0, add_user/2, check_user_present/1, get_user/1, delete_user/1, perform_login/2, get_trip/1, add_trip/6,
   get_trip_by_name/1, reset_trips/0, store_trip/3, update_partecipants/2, update_seats/2, update_date/2, update_pid/2,
-  get_active_trips/0, get_partecipants/1, delete_trip/1, update_favorites/2, check_if_tripName_present/1]).
+  get_active_trips/0, get_partecipants/1, delete_trip/1, update_favorites/2, check_if_tripName_present/1, get_user_favorites/1, update_user_favorites/2]).
 
--record(user, {username, password}).
+-record(user, {username, password, favorites}).
 -record(trip, {name, pid, organizer, destination, date, seats, partecipants, user_add_to_favorites}).
 
 start_mnesia() ->
@@ -49,7 +49,8 @@ add_user(Username, Password) ->
         mnesia:write(#user
         {
           username = Username,
-          password = Password
+          password = Password,
+          favorites = []
         });
         % mnesia_db:add_joined(Username);
         _ ->
@@ -63,6 +64,22 @@ get_user(Username) ->
   T = fun() ->
     mnesia:read({user, Username})
   end,
+  mnesia:transaction(T).
+
+get_user_favorites(Username) ->
+  T = fun() ->
+    %% {username, password, favorites}
+    User = #user{username='$1', password ='$2', favorites = '$3'},
+    Guard = {'==', '$1', Username},
+    mnesia:select(user, [{User, [Guard], ['$3']}])
+      end,
+  mnesia:transaction(T).
+
+update_user_favorites(NewValue, Username) ->
+  T = fun() ->
+    [Record] = mnesia:read({user, Username}),
+    mnesia:write(Record#user{favorites = NewValue})
+      end,
   mnesia:transaction(T).
 
 %% using the function mnesia:delete({Table, Key})

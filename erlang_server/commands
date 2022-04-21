@@ -1,7 +1,6 @@
 // show content of tables
     rp(ets:tab2list(user)).
     rp(ets:tab2list(trip)).
-    rp(ets:tab2list(joined)).
 
 // create user
     loop_server ! {self(), register, {a, a}}.
@@ -9,8 +8,11 @@
 // create new trip
     loop_server ! {self(), create_trip, {'gita', matteo, 'Pisa', '10/02/2023', 10}}.
 
-// clear table
-    loop_server ! {self(), reset_trips}.
+// add favorite
+    pid ! {self(), add_to_favorites, a}.
+
+// get trips
+    loop_server ! {self(), get_trips}.
 
 // start from supervisor
     erlang_server_sup:start_link().
