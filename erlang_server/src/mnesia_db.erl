@@ -228,7 +228,7 @@ get_trip_by_name(TripName) ->
     %% {pid, organizer, name, destination, date, seats, partecipants}).
     Trip = #trip{name='$1', pid='$2', organizer='$3', destination ='$4', date = '$5', seats ='$6', partecipants ='$7',user_add_to_favorites = '$8'},
     Guard = {'==', '$1', TripName},
-    mnesia:select(trip, [{Trip, [Guard], ['$2']}])
+    mnesia:select(trip, [{Trip, [Guard], ['$1', '$2', '$3', '$4', '$5', '$6', '$7', '$8']}])
       end,
   mnesia:transaction(T).
 
