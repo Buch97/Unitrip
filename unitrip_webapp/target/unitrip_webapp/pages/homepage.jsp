@@ -116,6 +116,8 @@
                             </script>
                         </div>
                         <div class="text-center">
+                            <%System.out.println(request.getSession().getAttribute("username").toString());%>
+                            <%System.out.println(trip.getFounder());%>
                             <%if(trip.getParticipants().size() < trip.getSeats()){%>
                             <script>var arg_<%=trip.getTripName()%> = '<%=trip.getTripName()%>';</script>
                             <%String nameTrip = trip.getTripName();%>
@@ -124,7 +126,11 @@
                                 <input id="TripName" type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input id="userLogged" type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <% if((!trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
-                                <input id="join" onclick="sendAdd(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
+                                <%if(!trip.getFounder().trim().equals(request.getSession().getAttribute("username").toString().trim())){%>
+                                <input onclick="sendAdd(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="joinButton" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
+                                <%} else{%>
+                                <input disabled style="font-size:17pt" class="btn btn-outline-dark mt-auto" type="submit" value="JOIN TRIP">
+                                <%}%>
                                 <%} else if((trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
                                 <input onclick="sendSub(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                                 <%} else if(request.getSession().getAttribute("username").toString().contains("admin")){%>
