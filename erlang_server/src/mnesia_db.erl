@@ -109,7 +109,7 @@ perform_login(Username, Password) ->
     io:format("[MNESIA] Performing login of the user ~p. ~n", [Username]),
     case mnesia_db:check_user_present(Username) of
       {atomic, true} ->
-        {_, [{user, Username, Pass}]} = get_user(Username),
+        {_, [{user, Username, Pass, _}]} = get_user(Username),
         case Password =:= Pass of
           true ->
             io:format("[MNESIA] Password correctly verified. ~n"),

@@ -49,10 +49,10 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants, User_Add_
       end;
     {From, add_to_favorites, Username} ->
       NewFavoritesProcess = User_Add_To_Favorites ++ [Username],
-      io:format("[TRIP PROCESS] User ~p added to favorites list. ~n", [Username]),
       io:format("[TRIP PROCESS] New process favorites lists: ~p. ~n", [NewFavoritesProcess]),
       ResultProcess = mnesia_db:update_favorites(NewFavoritesProcess, Name),
-      FavoritesUser = lists:flatten(element(2, mnesia_db:get_user_favorites(Username))),
+      FavoritesUser = lists:nth(1, element(2, mnesia_db:get_user_favorites(Username))),
+      io:format("[TRIP PROCESS] Favorite user: ~p. ~n", [FavoritesUser]),
       NewUserFavorites = FavoritesUser ++ [Name],
       io:format("[TRIP PROCESS] New user favorites list: ~p. ~n", [NewUserFavorites]),
       ResultUser = mnesia_db:update_user_favorites(NewUserFavorites, Username),
@@ -60,10 +60,9 @@ listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants, User_Add_
       listener_trip(Name, Organizer, Destination, Date, Seats, Partecipants, NewFavoritesProcess);
     {From, delete_from_favorites, Username} ->
       NewFavorites = lists:delete(Username, User_Add_To_Favorites),
-      io:format("[TRIP PROCESS] User ~p deleted from favorites list. ~n", [Username]),
       io:format("[TRIP PROCESS] New favorites lists: ~p. ~n", [NewFavorites]),
       Result = mnesia_db:update_favorites(NewFavorites, Name),
-      FavoritesUser = lists:flatten(element(2, mnesia_db:get_user_favorites(Username))),
+      FavoritesUser = lists:nth(1, element(2, mnesia_db:get_user_favorites(Username))),
       NewUserFavorites = lists:delete(Name, FavoritesUser),
       io:format("[TRIP PROCESS] New user favorites list: ~p. ~n", [NewUserFavorites]),
       ResultUser = mnesia_db:update_user_favorites(NewUserFavorites, Username),
