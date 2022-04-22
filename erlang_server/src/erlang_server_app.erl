@@ -13,7 +13,7 @@
 -import(trip, [listener_trip/6]).
 -export([start_main_server/0, register_request/2, init/1, handle_call/3, login_request/2, delete_request/1,
     create_trip_request/5, get_trips_request/0, lists_trips/2, trip_by_name/1, reset_trips/0, reset/0, handle_cast/2,
-    update_server_state/1, spawn_trips/1, update_active_trips/2, delete_trip/1]).
+    update_server_state/1, spawn_trips/1, update_active_trips/2, delete_trip/1, get_user_favorites/1]).
 
 %%%-------------------------------------------------------------------
 %%% API FUNCTIONS
@@ -48,6 +48,9 @@ get_trips_request() ->
 
 trip_by_name(Name) ->
     gen_server:call(main_server, {get_trip_by_name, Name}).
+
+get_user_favorites(Username) ->
+    gen_server:call(main_server, {get_user_favorites, Username}).
 
 update_server_state(From) ->
     gen_server:call(main_server, {terminate_trip, From}).
@@ -119,6 +122,10 @@ handle_call({get_trips}, _From, ServerState) ->
 handle_call({get_trip_by_name, Name}, _From, _ServerState) ->
     Result = mnesia_db:get_trip_by_name(Name),
     io:format("[MAIN SERVER] Result of get_trips_by_name: ~p. ~n", [Result]),
+    {reply, Result, _ServerState};
+handle_call({get_user_favorites, Username}, _From, _ServerState) ->
+    Result = mnesia_db:get_user_favorites(Username),
+    io:format("[MAIN SERVER] Result of get_user_favorites: ~p. ~n", [Result]),
     {reply, Result, _ServerState};
 handle_call({reset_trips}, _From, _ServerState) ->
     Result = mnesia_db:reset_trips(),

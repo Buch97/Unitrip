@@ -62,6 +62,10 @@ listener_server_loop() ->
    io:format("[LISTENER] Received a request for getting a trips by name.~n"),
    Result = erlang_server_app:trip_by_name(Name),
    From ! {self(), Result};
+  {From, get_user_favorites, Username} ->
+   io:format("[LISTENER] Received a request for getting user favorites list.~n"),
+   Result = erlang_server_app:get_user_favorites(Username),
+   From ! {self(), Result};
   {From, reset_trips} ->
    io:format("[LISTENER] Received a request for delete available trips.~n"),
    Result = erlang_server_app:reset_trips(),
