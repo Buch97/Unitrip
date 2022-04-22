@@ -109,9 +109,9 @@ public class MessageHandler{
 
     private void sendDeleteTrip(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangString otpErlangString) {
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
-        //System.out.println(otpMbox.self());
+        System.out.println(otpMbox.self());
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangString});
-        //System.out.println("REQUEST: " + request);
+        System.out.println("REQUEST: " + request);
         otpMbox.send(serverPID, serverNode, request);
     }
 
@@ -148,7 +148,6 @@ public class MessageHandler{
         otpMbox.send(trip_process, request);
         System.out.println("sendToPid: Inviata");
     }
-
 
     private void sendFavorites(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangString otpErlangString) {
         OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server

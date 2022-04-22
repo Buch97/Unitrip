@@ -20,13 +20,8 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Homepage</title>
-    <!-- Favicon-->
-    <!--<link rel="icon" type="image/x-icon" href="assets/favicon.ico" />-->
-    <!-- Bootstrap icons-->
-
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="./resources/css/homepage.css" rel="stylesheet" />
-    <script type="text/javascript" src="./resources/js/homepage_websocket.js"></script>
+    <link href="<%=request.getContextPath()%>/resources/css/homepage.css" rel="stylesheet" />
+    <script type="text/javascript" src="<%=request.getContextPath()%>/resources/js/homepage_websocket.js"></script>
 
 </head>
 <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');">
@@ -116,8 +111,6 @@
                             </script>
                         </div>
                         <div class="text-center">
-                            <%System.out.println(request.getSession().getAttribute("username").toString());%>
-                            <%System.out.println(trip.getFounder());%>
                             <%if(trip.getParticipants().size() < trip.getSeats()){%>
                             <script>var arg_<%=trip.getTripName()%> = '<%=trip.getTripName()%>';</script>
                             <%String nameTrip = trip.getTripName();%>

@@ -20,7 +20,7 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Favourites</title>
-    <link href="./resources/css/homepage.css" rel="stylesheet" />
+    <link href="<%=request.getContextPath()%>/resources/css/homepage.css" rel="stylesheet" />
 
 </head>
 <body>

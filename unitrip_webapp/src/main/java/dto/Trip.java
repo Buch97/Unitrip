@@ -119,14 +119,14 @@ public class Trip {
         //System.out.println("SEATS: " + seats);
         OtpErlangList parts = (OtpErlangList) record.elementAt(6);
         OtpErlangList favs = (OtpErlangList) record.elementAt(7);
-        System.out.println("LIST: " + favs);
+        //System.out.println("LIST: " + favs);
         for (OtpErlangObject person : parts) {
             //System.out.println(person.toString());
             participants.add(person.toString().replace('"',' ').trim());
         }
 
         for (OtpErlangObject person : favs) {
-            System.out.println(person.toString());
+            //System.out.println(person.toString());
             favorites.add(person.toString().replace('"',' ').trim());
         }
         //System.out.println("LEN: " + participants.size());
