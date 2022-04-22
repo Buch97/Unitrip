@@ -17,6 +17,9 @@
 // start from supervisor
     erlang_server_sup:start_link().
 
+// delete trip
+    loop_server ! {self(), delete_trip, "viaggio"}.
+
 // start from main
     erlang_server_app:start_main_server().
 

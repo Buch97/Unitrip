@@ -56,7 +56,7 @@ update_server_state(From) ->
     gen_server:call(main_server, {terminate_trip, From}).
 
 delete_trip(TripName) ->
-    Pid = lists:nth(1, element(2, mnesia_db:get_trip_by_name(TripName))),
+    Pid = lists:nth(2, lists:nth(1, element(2, mnesia_db:get_trip_by_name(TripName)))),
     gen_server:call(main_server, {delete_trip, Pid, TripName}).
 
 reset_trips() ->
@@ -149,7 +149,6 @@ handle_cast(reset, ServerState) ->
 %%%-------------------------------------------------------------------
 
 lists_trips([], Result) ->
-    io:format("[MAIN SERVER] NEWRESULT: ~p. ~n", [Result]),
     FinalResult = lists:reverse(lists:keysort(3, Result)),
     FinalResult;
 lists_trips([H|T], Result) ->
