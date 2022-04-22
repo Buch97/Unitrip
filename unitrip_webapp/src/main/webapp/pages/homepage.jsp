@@ -33,7 +33,8 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
         <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt">Logout</a></div>
-        <a style="margin-left:10em; font-size:25pt" class="navbar-brand" >Incoming trips</a>
+        <div style="font-size:20pt" class="navbar-brand" ><a href="<%=request.getContextPath()%>/FavoriteServlet" style="font-size:20pt">Favourites Trip</a></div>
+        <a style="margin-left:6em; font-size:25pt" class="navbar-brand" >Incoming trips</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <div style="margin-left:15em" class="d-flex">
@@ -64,7 +65,13 @@
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input  type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input  type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
-                                <input style="font-size:12pt" name="favButton" type="submit" src="" value="SAVE">
+                                <%if(!trip.getFavorites().contains(request.getSession().getAttribute("username").toString())){%>
+                                <input type="hidden" name="likeButton" value="likeButton">
+                                <input  style="width:50px; height: 50px" type="image" src="<%=request.getContextPath()%>/resources/images/notstar.png">
+                                <%} else{%>
+                                <input type="hidden" name="dislikeButton" value="dislikeButton">
+                                <input  style="width:50px; height: 50px" type="image" src="<%=request.getContextPath()%>/resources/images/star.png">
+                                <%}%>
                             </form>
                             <h3><%=trip.getDate()%></h3>
                             <h3>Founder: <%=trip.getFounder()%></h3>

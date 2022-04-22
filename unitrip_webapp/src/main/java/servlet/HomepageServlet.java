@@ -54,16 +54,26 @@ public class HomepageServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        else if(request.getParameter("favButton") != null){
+        else if(request.getParameter("deleteButton") != null){
             try {
-                success = new MessageHandler().remove_participant(request.getSession(), username, trip_name);
+                success = new MessageHandler().delete_trip(request.getSession(), trip_name);
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }
         }
-        else if(request.getParameter("deleteButton") != null){
+        else if (request.getParameter("likeButton") != null) {
             try {
-                success = new MessageHandler().delete_trip(request.getSession(), trip_name);
+                System.out.println("CHIAMO ADD FAVORITE");
+                success = new MessageHandler().add_favorite(request.getSession(), username, trip_name);
+                System.out.println("Ritorno funzione add_favs");
+            } catch (OtpErlangDecodeException | OtpErlangExit e) {
+                e.printStackTrace();
+            }
+        }
+        else if (request.getParameter("dislikeButton") != null) {
+            try {
+                success = new MessageHandler().delete_favorite(request.getSession(), username, trip_name);
+                //System.out.println("Ritorno funzione add_part");
             } catch (OtpErlangDecodeException | OtpErlangExit e) {
                 e.printStackTrace();
             }

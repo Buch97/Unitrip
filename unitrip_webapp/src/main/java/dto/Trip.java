@@ -17,6 +17,7 @@ public class Trip {
     String founder;
     int seats;
     ArrayList<String> participants;
+    ArrayList<String> favorites;
 
 
     public Trip(String tripName, String destination, LocalDate date, String founder, int seats) {
@@ -27,13 +28,14 @@ public class Trip {
         this.seats = seats;
     }
 
-    public Trip(String tripName, String destination, LocalDate date, String founder, int seats, ArrayList<String> participants) {
+    public Trip(String tripName, String destination, LocalDate date, String founder, int seats, ArrayList<String> participants, ArrayList<String> favorites) {
         this.tripName = tripName;
         this.destination = destination;
         this.date = date;
         this.founder = founder;
         this.seats = seats;
         this.participants = participants;
+        this.favorites = favorites;
     }
 
     public String getTripName() {
@@ -83,6 +85,15 @@ public class Trip {
     public void setParticipants(ArrayList<String> particpants) {
         this.participants = particpants;
     }
+
+    public ArrayList<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<String> favorites) {
+        this.favorites = favorites;
+    }
+
     public long ExpirationDate(LocalDate date){
         return java.sql.Date.valueOf(date).getTime() - 1000*7*24*60*60;
     }
@@ -90,6 +101,7 @@ public class Trip {
     public static Trip parseErlang(OtpErlangList record) throws OtpErlangRangeException, ParseException {
         System.out.println("RECORD --> " + record);
         ArrayList<String> participants = new ArrayList<>();
+        ArrayList<String> favorites = new ArrayList<>();
         String destination = record.elementAt(3).toString().replace('"',' ').trim();
         //System.out.println("DEST: " + destination);
         long dateErlang = Long.parseLong(String.valueOf(record.elementAt(4)));
@@ -105,16 +117,22 @@ public class Trip {
         //System.out.println("NAME: " + tripName);
         int seats = Integer.parseInt(String.valueOf(record.elementAt(5)));
         //System.out.println("SEATS: " + seats);
-        OtpErlangList list = (OtpErlangList) record.elementAt(6);
-        //System.out.println("LIST: " + list);
-        for (OtpErlangObject person : list) {
+        OtpErlangList parts = (OtpErlangList) record.elementAt(6);
+        OtpErlangList favs = (OtpErlangList) record.elementAt(7);
+        System.out.println("LIST: " + favs);
+        for (OtpErlangObject person : parts) {
             //System.out.println(person.toString());
             participants.add(person.toString().replace('"',' ').trim());
+        }
+
+        for (OtpErlangObject person : favs) {
+            System.out.println(person.toString());
+            favorites.add(person.toString().replace('"',' ').trim());
         }
         //System.out.println("LEN: " + participants.size());
         //System.out.println("ARR: " + participants);
 
-        return  new Trip(tripName, destination, date, founder, seats, participants);
+        return  new Trip(tripName, destination, date, founder, seats, participants, favorites);
     }
 
 
