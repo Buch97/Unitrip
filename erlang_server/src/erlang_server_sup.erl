@@ -34,9 +34,6 @@ init(_Args) ->
   MainServer = #{id => erlang_server_app,
     start => {erlang_server_app, start_main_server, []},
     restart => permanent},
-  % Monitor = #{id => monitor_trip,
-  %   start => {monitor_trip, start_monitor, []},
-  %   restart => permanent},
   ChildSpecs = [MainServer],
     {ok, {SupFlags, ChildSpecs}}.
 
