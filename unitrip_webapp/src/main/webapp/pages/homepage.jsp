@@ -27,8 +27,8 @@
 <body onload="connect('<%=request.getContextPath()%>', '<%=request.getSession().getAttribute("username")%>');">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
-        <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt">Logout</a></div>
-        <div style="font-size:20pt" class="navbar-brand" ><a href="<%=request.getContextPath()%>/FavoriteServlet" style="font-size:20pt">Favourites Trip</a></div>
+        <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt; text-decoration: none">Logout</a></div>
+        <div style="font-size:20pt" class="navbar-brand" ><a href="<%=request.getContextPath()%>/FavoriteServlet" style="font-size:20pt; text-decoration: none">Favourites Trip</a></div>
         <a style="margin-left:6em; font-size:25pt" class="navbar-brand" >Incoming trips</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">

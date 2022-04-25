@@ -12,10 +12,11 @@
 </head>
 
 <body>
-<h1>Login Page</h1>
+
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
+        <h1>Login Page</h1>
         <h2 class="active"> Log In </h2>
 
         <!-- Login Form -->
