@@ -21,7 +21,8 @@ public class OtpMboxSingleton {
         if(otpNode == null){
             try {
                 String nodeName = InetAddress.getLocalHost().getHostName();
-                otpNode = new OtpNode(nodeName + "@localhost", cookie); //nome client + cookie
+                //otpNode = new OtpNode(nodeName + "@localhost", cookie); //nome client + cookie
+                otpNode = new OtpNode(nodeName + "@172.18.0.27", cookie); //nome client + cookie
             } catch(Exception e){
                 e.printStackTrace();
             }
