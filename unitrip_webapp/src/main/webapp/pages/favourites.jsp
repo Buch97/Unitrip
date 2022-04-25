@@ -26,9 +26,9 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container px-4 px-lg-5">
-        <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt">Logout</a></div>
+        <div style="font-size:20pt" class="navbar-brand" ><%=request.getSession().getAttribute("username")%> | <a href="<%=request.getContextPath()%>/LoginServlet" style="font-size:20pt; text-decoration: none">Logout</a></div>
         <a style="margin-left:1em; font-size:25pt" class="navbar-brand" >Favourites Trips</a>
-        <div style="font-size:20pt" class="navbar-brand" ><a href="<%=request.getContextPath()%>/HomepageServlet" style="font-size:20pt">Homepage</a></div>
+        <div style="font-size:20pt" class="navbar-brand" ><a href="<%=request.getContextPath()%>/HomepageServlet" style="font-size:20pt; text-decoration: none">Homepage</a></div>
     </div>
 </nav>
 <!-- Section-->
