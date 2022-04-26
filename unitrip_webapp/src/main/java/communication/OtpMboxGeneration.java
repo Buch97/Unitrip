@@ -7,12 +7,12 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.net.InetAddress;
 
-public class OtpMboxSingleton {
+public class OtpMboxGeneration {
     private static final String cookie = "unitrip";
     private static OtpNode otpNode = null;
     private OtpMbox otpMbox;
 
-    private OtpMboxSingleton(String id) throws IOException {
+    private OtpMboxGeneration(String id) throws IOException {
         otpMbox = otpNode.createMbox(id);
         System.out.println("OtpMBOX name: " + otpMbox.getName() + ", otpMBOX pid" + otpMbox.self().toString());
     }
@@ -28,11 +28,11 @@ public class OtpMboxSingleton {
             }
         }
 
-        OtpMboxSingleton ret = (OtpMboxSingleton) session.getAttribute("otpmbox");
+        OtpMboxGeneration ret = (OtpMboxGeneration) session.getAttribute("otpmbox");
 
         if (ret == null) {
             try {
-                ret = new OtpMboxSingleton(session.getId());
+                ret = new OtpMboxGeneration(session.getId());
                 session.setAttribute("otpmbox", ret);
             } catch (IOException e) {
                 e.printStackTrace();

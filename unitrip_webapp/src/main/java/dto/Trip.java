@@ -99,7 +99,7 @@ public class Trip {
     }
 
     public static Trip parseErlang(OtpErlangList record) throws OtpErlangRangeException, ParseException {
-        System.out.println("RECORD --> " + record);
+        System.out.println("TRIP TO BE PRINTED ON THE PAGE --> " + record);
         ArrayList<String> participants = new ArrayList<>();
         ArrayList<String> favorites = new ArrayList<>();
         String destination = record.elementAt(3).toString().replace('"',' ').trim();

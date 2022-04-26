@@ -128,7 +128,6 @@
                                 <%}%>
                                 <%} else if((trip.getParticipants().contains(request.getSession().getAttribute("username").toString())) && (!request.getSession().getAttribute("username").toString().contains("admin"))){%>
                                 <%//se non sono l'admin e l'user di sessione è in lista%>
-                                <%System.out.println("INVIO SUB 1");%>
                                 <input onclick="sendSub(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                                 <%} else if(request.getSession().getAttribute("username").toString().contains("admin")){%>
                                 <input style="font-size:17pt" name="deleteButton" class="btn btn-outline-dark mt-auto" type="submit" value="DELETE TRIP">
@@ -139,7 +138,6 @@
                             <%//se non ci sono piu posti%>
                             <%if(trip.getParticipants().contains(request.getSession().getAttribute("username").toString())){%>
                             <%//se l'user di sessione è in lista%>
-                            <%System.out.println("INVIO SUB 2");%>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">
                                 <input type="hidden" name="trip_name" value="<%=trip.getTripName()%>">
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">

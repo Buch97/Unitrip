@@ -12,8 +12,8 @@ import java.util.Objects;
 //i metodi di questa classe sono chiamati dai vari servlet
 //in questo modulo si devono inoltratre i messaggi di richiesta dei vari client al server di erlang
 public class MessageHandler{
-    private static final String serverNode = "server@localhost";
-    //private static final String serverNode = "server@172.18.0.26";
+    //private static final String serverNode = "server@localhost";
+    private static final String serverNode = "server@172.18.0.26";
     private static final String serverPID = "loop_server";
     private static int id = 0;
 
@@ -90,7 +90,6 @@ public class MessageHandler{
     public ArrayList<Trip> get_favourite_trips(HttpSession s, String user) throws OtpErlangException, ParseException {
         ArrayList<Trip> trip_favorites = new ArrayList<>();
         OtpErlangList app = get_favourite_list(s, user); //mi ritorna una stringList dei nomi dei viaggi preferiti di user
-        //SI FERMA QUI
         OtpErlangList favourites = (OtpErlangList) app.elementAt(0);
         //System.out.println("LISTA FINALE: " + favourites);
         if (favourites == null)
@@ -109,61 +108,68 @@ public class MessageHandler{
     }
 
     private void sendDeleteTrip(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangString otpErlangString) {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println("funzione: " + otpErlangAtom + " ,Mbox creata");
         //System.out.println(otpMbox.self());
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangString});
-        //System.out.println("REQUEST: " + request);
+        System.out.println("Request Message: " + request);
         otpMbox.send(serverPID, serverNode, request);
     }
 
     public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom) {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println("funzione: " + otpErlangAtom + " ,Mbox creata");
         //System.out.println(otpMbox.self());
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom});
+        System.out.println("Request Message: " + request);
         otpMbox.send(serverPID, serverNode, request);
     }
 
     public void sendGetTripByName(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtomOne, OtpErlangString name) {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
-        //System.out.println(otpMbox.self());
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
+        System.out.println("funzione: " + otpErlangAtomOne + " ,Mbox creata");
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtomOne, name });
         //System.out.println("REQUEST(sendToGetPid): " + request);
+        System.out.println("Request Message: " + request);
         otpMbox.send(serverPID, serverNode, request);
     }
 
     public void send(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangTuple otpErlangTuple){
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session); //creo la mailbox a cui mi risponderà il server
         System.out.println("funzione: " + otpErlangAtom + " ,Mbox creata");
         //System.out.println("tupla: " + otpErlangTuple);
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangTuple});
-        System.out.println("Request: " + request);
+        System.out.println("Request Message: " + request);
         otpMbox.send(serverPID, serverNode, request);
         //System.out.println("Send Mbox fatta");
     }
 
     public void sendToPid(HttpSession session, OtpErlangPid trip_process, OtpErlangAtom otpErlangAtom, OtpErlangString otpErlangTuple){
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println("funzione: " + otpErlangAtom + " ,Mbox creata");
         //System.out.println("sendToPId: Mbox creata");
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangTuple});
-        System.out.println("REQUEST ADD FAVORITES/PARTICPANT: " + request);
+        //System.out.println("REQUEST ADD FAVORITES/PARTICPANT: " + request);
+        System.out.println("Request Message: " + request);
         otpMbox.send(trip_process, request);
         //System.out.println("sendToPid: Inviata");
     }
 
     private void sendFavorites(HttpSession session, String serverPID, OtpErlangAtom otpErlangAtom, OtpErlangString otpErlangString) {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session); //creo la mailbox a cui mi risponderà il server
+        System.out.println("funzione: " + otpErlangAtom + " ,Mbox creata");
         //System.out.println(otpMbox.self());
         OtpErlangTuple request = new OtpErlangTuple(new OtpErlangObject[]{otpMbox.self(), otpErlangAtom, otpErlangString});
-        //System.out.println("Request: " + request);
+        System.out.println("Request Message: " + request);
         otpMbox.send(serverPID, serverNode, request);
     }
 
     public String receiveResponse(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status = new OtpErlangAtom("");
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
-        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
+        //System.out.println("MBOX CREATA ASPETTO RISPOSTA");
         OtpErlangObject message = otpMbox.receive();
-        System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status = (OtpErlangAtom) (responseTuple).elementAt(1); //vado a vedere solo l'esito della mia richiesta
@@ -174,10 +180,10 @@ public class MessageHandler{
 
     public String receiveResponseAddPart(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status = new OtpErlangAtom("");
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
-        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
+        //System.out.println("MBOX CREATA ASPETTO RISPOSTA");
         OtpErlangObject message = otpMbox.receive();
-        System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status = (OtpErlangAtom) (responseTuple).elementAt(1);
@@ -191,10 +197,10 @@ public class MessageHandler{
         OtpErlangTuple status_2 = null;
         OtpErlangAtom response_1 = null;
         OtpErlangAtom response_2 = null;
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
-        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
+        //System.out.println("MBOX CREATA ASPETTO RISPOSTA");
         OtpErlangObject message = otpMbox.receive();
-        System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             status_1 = (OtpErlangTuple) (responseTuple).elementAt(0);
@@ -209,10 +215,10 @@ public class MessageHandler{
     }
 
     public OtpErlangPid receivePid(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
         //System.out.println("MBOX CREATA ASPETTO RISPOSTA COL PID");
         OtpErlangObject message = otpMbox.receive();
-        //System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         OtpErlangList obj = null;
         OtpErlangList list = null;
         if(message instanceof OtpErlangTuple){
@@ -226,10 +232,10 @@ public class MessageHandler{
     }
 
     public Trip receiveTrip(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit, OtpErlangRangeException, ParseException {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
         //System.out.println("MBOX CREATA ASPETTO RISPOSTA COL PID");
         OtpErlangObject message = otpMbox.receive();
-        //System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         OtpErlangList obj = null;
         OtpErlangList list = null;
         Trip trip = null;
@@ -246,10 +252,10 @@ public class MessageHandler{
 
     public String receiveResponseTripCreation(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangAtom status = new OtpErlangAtom("");
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
         //System.out.println("MBOX CREATA ASPETTO RISPOSTA");
         OtpErlangObject message = otpMbox.receive();
-        //System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             OtpErlangTuple first = (OtpErlangTuple) responseTuple.elementAt(0);
@@ -260,9 +266,9 @@ public class MessageHandler{
     }
 
     public ArrayList<Trip> receiveList(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit, OtpErlangRangeException, ParseException {
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
         OtpErlangObject message = otpMbox.receive();
-        //System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         ArrayList<Trip> tripList = new ArrayList<>();
         if(message instanceof OtpErlangTuple) {
             OtpErlangList responseList = (OtpErlangList) ((OtpErlangTuple) message).elementAt(1);
@@ -283,14 +289,14 @@ public class MessageHandler{
 
     private OtpErlangList receiveResponseListFavorites(HttpSession session) throws OtpErlangDecodeException, OtpErlangExit {
         OtpErlangList favorites = null;
-        OtpMbox otpMbox = OtpMboxSingleton.getInstance(session);
-        System.out.println("MBOX CREATA ASPETTO RISPOSTA");
+        OtpMbox otpMbox = OtpMboxGeneration.getInstance(session);
+        //System.out.println("MBOX CREATA ASPETTO RISPOSTA");
         OtpErlangObject message = otpMbox.receive();
-        System.out.println("Message: " + message);
+        System.out.println("Response Message: " + message);
         if(message instanceof OtpErlangTuple){
             OtpErlangTuple responseTuple = (OtpErlangTuple) ((OtpErlangTuple) message).elementAt(1);
             favorites = (OtpErlangList) (responseTuple).elementAt(1); //vado a vedere solo l'esito della mia richiesta
-            System.out.println("LIST FAVS: " + favorites);
+            //System.out.println("LIST FAVS: " + favorites);
         }
         return favorites;
     }

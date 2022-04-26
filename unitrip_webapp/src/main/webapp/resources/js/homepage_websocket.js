@@ -21,14 +21,13 @@ function connect(ctx, username) {
             count.innerHTML = (parseInt(count.innerHTML) + 1).toString();
             child.innerHTML = message.user.toString()
             child.setAttribute('id','child_' + message.user)
-            list.removeChild(empty_span)
+            if(empty_span != null)
+                list.removeChild(empty_span)
             list.appendChild(child);
         }
         if(message.action === 'sub') {
             count.innerHTML = (parseInt(count.innerHTML) - 1).toString();
             list.removeChild(child_span)
-            if(parseInt(count.innerHTML) === 0)
-                list.appendChild(empty_span);
         }
 
     };
