@@ -16,10 +16,12 @@ function connect(ctx, username) {
         var count = document.getElementById("numSeats_" + message.name);
         var list = document.getElementById("myDropdown_" + message.name);
         var child_span = document.getElementById("child_" + message.user);
+        var empty_span = document.getElementById("empty_" + message.name);
         if(message.action === 'add') {
             count.innerHTML = (parseInt(count.innerHTML) + 1).toString();
             child.innerHTML = message.user.toString()
             child.setAttribute('id','child_' + message.user)
+            list.removeChild(empty_span)
             list.appendChild(child);
         }
         if(message.action === 'sub') {
@@ -42,6 +44,8 @@ function sendAdd(trip){
 }
 
 function sendSub(trip){
+    console.log("DENTRO SEND SUB")
+    console.log("TRIP NAME: " + trip)
     var json = JSON.stringify({
         "name":trip,
         "action":"sub"
