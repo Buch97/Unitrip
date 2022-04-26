@@ -4,7 +4,8 @@
 <%@ page import="java.io.FileWriter" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="dto.TripList" %>
-<%@ page import="java.nio.file.Files" %><%--
+<%@ page import="java.nio.file.Files" %>
+<%@ page import="java.util.Objects" %><%--
   Created by IntelliJ IDEA.
   User: pucci
   Date: 07/04/2022
@@ -82,7 +83,7 @@
                                         <span id="child_<%=user%>"><%=user%></span>
                                     <%}%>
                                     <%} else{%>
-                                        <span id="empty_"<%=trip.getTripName()%>>No participants at the moment</span>
+                                        <span id="empty_<%=trip.getTripName()%>">No participants at the moment</span>
                                     <%}%>
                                 </div>
                             </div>
@@ -144,7 +145,8 @@
                                 <input type="hidden" name="username" value="<%=request.getSession().getAttribute("username")%>">
                                 <input onclick="sendSub(arg_<%=trip.getTripName()%>)" style="font-size:17pt" name="leaveButton" class="btn btn-outline-dark mt-auto" type="submit" value="LEAVE TRIP">
                             </form>
-                            <%} else{%>
+                            <%} else if(!Objects.equals(trip.getFounder(), request.getSession().getAttribute("username").toString())){%>
+                            <%//scrivo no seats solo se il fondatore del viaggio non è l'utente di sessione, altrimenti continua a vedere il join%>
                             <h3> No seats available</h3>
                             <%}%>
                             <form method="post" action="<%=request.getContextPath()%>/HomepageServlet">

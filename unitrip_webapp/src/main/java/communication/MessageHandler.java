@@ -12,8 +12,8 @@ import java.util.Objects;
 //i metodi di questa classe sono chiamati dai vari servlet
 //in questo modulo si devono inoltratre i messaggi di richiesta dei vari client al server di erlang
 public class MessageHandler{
-    //private static final String serverNode = "server@localhost";
-    private static final String serverNode = "server@172.18.0.26";
+    private static final String serverNode = "server@localhost";
+    //private static final String serverNode = "server@172.18.0.26";
     private static final String serverPID = "loop_server";
     private static int id = 0;
 

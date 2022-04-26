@@ -27,6 +27,8 @@ function connect(ctx, username) {
         if(message.action === 'sub') {
             count.innerHTML = (parseInt(count.innerHTML) - 1).toString();
             list.removeChild(child_span)
+            if(parseInt(count.innerHTML) === 0)
+                list.appendChild(empty_span);
         }
 
     };

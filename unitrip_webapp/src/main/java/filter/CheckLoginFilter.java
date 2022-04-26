@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "CheckLoginFilter", urlPatterns = {/*"/HomepageServlet", "/NewTripServlet"*/})
+@WebFilter(filterName = "CheckLoginFilter", urlPatterns = {"/HomepageServlet", "/NewTripServlet", "/FavoriteServlet"})
 public class CheckLoginFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -16,7 +16,7 @@ public class CheckLoginFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws ServletException, IOException {
-       /* System.out.println("You have requested a page which needs login");
+        System.out.println("[JAVA FILTER] You have requested a page which needs login");
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
         HttpSession session = request.getSession(false);
@@ -29,7 +29,7 @@ public class CheckLoginFilter implements Filter {
             chain.doFilter(request, response);
         } else {
             response.sendRedirect(loginURI);
-        }*/
+        }
     }
 
     @Override
