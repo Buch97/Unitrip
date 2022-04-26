@@ -12,10 +12,11 @@
 </head>
 
 <body>
-<h1>Registration Page</h1>
+
 <div class="wrapper fadeInDown">
     <div id="formContent">
         <!-- Tabs Titles -->
+        <h1>Registration Page</h1>
         <h2 class="active"> Sign Up </h2>
         <!-- Login Form -->
         <form action="<%=request.getContextPath()%>/RegistrationServlet" method="post">
